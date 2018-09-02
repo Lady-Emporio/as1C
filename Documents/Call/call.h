@@ -9,7 +9,6 @@ class TableModelForCall : public QSqlTableModel
 public:
     explicit TableModelForCall(QObject *parent = 0, QSqlDatabase db = QSqlDatabase());
     QVariant data(const QModelIndex &idx, int role) const;
-    void rowsInserted(const QModelIndex &parent, int start, int end);
 };
 
 class Call : public QWidget
@@ -19,9 +18,9 @@ class Call : public QWidget
     int indexColumnToHide;
     int parentColumnToHide;
     void makeGui();
-    QTableView * tableView;
     int commentIndex;
 public:
+    QTableView * tableView;
     TableModelForCall * modelCall;
     explicit Call(QWidget *parent , QString phoneIndex, int indexColumnToHide, int parentColumnToHide,int commentIndex);
 

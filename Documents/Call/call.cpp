@@ -8,18 +8,27 @@ TableModelForCall::TableModelForCall(QObject *parent,QSqlDatabase db) : QSqlTabl
 QVariant TableModelForCall::data(const QModelIndex &idx, int role) const
 {
     if(role == Qt::BackgroundColorRole){
-        if(QSqlTableModel::data(this->index(idx.row(), 10)).toString() == "Красный"){
+        if(""==QSqlTableModel::data(this->index(idx.row(), 13)).toString()){
+            return QColor(Qt::white);
+        }else if("Красный"==QSqlTableModel::data(this->index(idx.row(), 13)).toString()){
             return QColor(Qt::red);
-        }
+        }else if("Зеленый"==QSqlTableModel::data(this->index(idx.row(), 13)).toString()){
+            return QColor(Qt::green);
+        }else if("Синий"==QSqlTableModel::data(this->index(idx.row(), 13)).toString()){
+            return QColor(118,231,255);
+        }else if("Коричневый"==QSqlTableModel::data(this->index(idx.row(), 13)).toString()){
+            return QColor(148,152,67);
+        }else if("Желтый"==QSqlTableModel::data(this->index(idx.row(), 13)).toString()){
+            return QColor(Qt::yellow);
+        }else if("Фиолетовый"==QSqlTableModel::data(this->index(idx.row(), 13)).toString()){
+            return QColor(167,3,255);
+        };
     } else if(role == Qt::DisplayRole){
+        return QSqlTableModel::data(idx);
+    }else if(Qt::EditRole==role){
         return QSqlTableModel::data(idx);
     }
     return QVariant();
-}
-
-void TableModelForCall::rowsInserted(const QModelIndex &parent, int start, int end)
-{
-    qDebug()<<"new row TableModelForCall"<<parent<<start<<end;
 }
 
 void Call::makeGui()

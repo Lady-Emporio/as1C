@@ -2,7 +2,7 @@
 #define DELEGATE_H
 
 #include "allinclude.h"
-
+#include "Settings/settings.h"
 class ComboBoxDelegate : public QItemDelegate
 {
 Q_OBJECT
@@ -16,6 +16,12 @@ public:
 
 };
 
+class DelegateForCall : public QItemDelegate
+{
+    Q_OBJECT
+    public:
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
 
 class ColorTextDelegate : public QItemDelegate
 {

@@ -16,6 +16,7 @@ class Settings
 public:
     MainWindow * MW;
     QSqlDatabase _db;
+    static QString getSqlTime();
     static QStringList keys();
     static Settings *S();
     static QString get(QString par);

@@ -35,6 +35,7 @@ public slots:
     void SELECT_phone();
     void action_chooseFile();
     QStringList getDealersFromFile(QString dealer);
+    void action_showHide();
 };
 
 #endif // PHONE_H

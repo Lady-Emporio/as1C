@@ -216,6 +216,11 @@ void Settings::SetDefaultParams()
     parameters.insert("app/image","./image.png");
 }
 
+QString Settings::getSqlTime()
+{
+    return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+}
+
 QStringList Settings::keys()
 {
     return Settings::S()->parameters.keys();

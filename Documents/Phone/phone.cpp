@@ -25,7 +25,10 @@ void Phone::makeGui()
     r2Layout->addWidget(orders_presentation);
 
     callsTable=new Call(this,code,0,1,13);
-
+    DelegateForCall *forAllColimn=new DelegateForCall();
+    for(int i=0;i!=15;++i){
+        callsTable->tableView->setItemDelegateForColumn(i,forAllColimn);
+    }
     if(""!=parentOrder){
         orders_presentation->setText(getOrderPresentation(parentOrder));
     }
@@ -46,6 +49,10 @@ void Phone::makeGui()
     mainBar->addAction("Save",this,SLOT(UPDATE_phone()));
     mainBar->addAction("Refresh",this,SLOT(SELECT_phone()));
     mainBar->addAction("FromFile",this,SLOT(action_chooseFile()));
+
+    QMenu * tableActions=new QMenu(mainBar);
+    mainBar->addMenu(tableActions);
+    mainBar->addAction("show/hide",this,SLOT(action_showHide()));
 }
 
 void Phone::itsNew()
@@ -282,4 +289,48 @@ QStringList Phone::getDealersFromFile(QString dealer)
             <<query.value("_activePhone").toString();
     qDebug()<<dataList;
     return dataList;
+}
+
+void Phone::action_showHide()
+{
+    static int status=0;
+    if(0==status){
+        callsTable->tableView->showColumn(0);
+        callsTable->tableView->showColumn(1);
+        callsTable->tableView->showColumn(2);
+        callsTable->tableView->showColumn(3);
+        callsTable->tableView->showColumn(4);
+        callsTable->tableView->showColumn(5);
+        callsTable->tableView->showColumn(6);
+        callsTable->tableView->showColumn(7);
+        callsTable->tableView->showColumn(8);
+        callsTable->tableView->showColumn(9);
+        callsTable->tableView->showColumn(10);
+        callsTable->tableView->showColumn(11);
+        callsTable->tableView->showColumn(12);
+        callsTable->tableView->showColumn(13);
+        callsTable->tableView->showColumn(14);
+        status=1;
+    }else if(1==status){
+        callsTable->tableView->hideColumn(0);
+        callsTable->tableView->hideColumn(1);
+        status=2;
+    }else if(2==status){
+        callsTable->tableView->hideColumn(0);
+        callsTable->tableView->hideColumn(1);
+        //callsTable->tableView->hideColumn(2);
+        callsTable->tableView->hideColumn(3);
+        //callsTable->tableView->hideColumn(4);
+        callsTable->tableView->hideColumn(5);
+        //callsTable->tableView->hideColumn(6);
+        //callsTable->tableView->hideColumn(7);
+        //callsTable->tableView->hideColumn(8);
+        callsTable->tableView->hideColumn(9);
+        callsTable->tableView->hideColumn(10);
+        callsTable->tableView->hideColumn(11);
+        //callsTable->tableView->hideColumn(12);
+        //callsTable->tableView->hideColumn(13);
+        //callsTable->tableView->hideColumn(14);
+        status=0;
+    }
 }
