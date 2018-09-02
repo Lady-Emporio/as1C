@@ -17,6 +17,7 @@ class Order : public QWidget
     QLineEdit *rlRec;
     QComboBox *statusRec;
     QString code;
+    QString dateCreate;
     QString indexCar;
     Subtable*subCommentTable;
     Subtable*subOptionTable;
@@ -33,6 +34,7 @@ signals:
 public slots:
     void UPDATE_orders();
     void SELECT_order();
+    void action_phones_list();
 };
 
 #endif // ORDER_H

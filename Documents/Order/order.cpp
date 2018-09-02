@@ -40,9 +40,8 @@ void Order::makeGui()
     subCommentTable->tableView->hideColumn(subCommentTable->parentColumnToHide);
 
     idRec=new QLineEdit(this);
-    dateRec=new QLabel(this);
+    dateRec=new QLabel(dateCreate,this);
     managerRec=new QComboBox(this);
-
     QSqlQueryModel *model = new QSqlQueryModel;
     model->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0",Settings::S()->_db);
     managerRec->setModel(model);
@@ -112,13 +111,14 @@ void Order::makeGui()
     mainLayout->setMenuBar(mainMenu);
     mainMenu->addAction("Update",this,SLOT(UPDATE_orders()));
     mainMenu->addAction("Refresh all",this,SLOT(SELECT_order()));
+    mainMenu->addAction("Phones",this,SLOT(action_phones_list()));
 }
 
 void Order::itsNew()
 {
     QSqlQuery query(Settings::S()->_db);
-    query.prepare("INSERT INTO orders(_manager,_model,_status) VALUES "
-                      " (:manager,:model,:status);");
+    query.prepare("INSERT INTO orders(_date,_manager,_model,_status) VALUES "
+                      " (datetime('now'),:manager,:model,:status);");
     query.bindValue(":manager","root");
     query.bindValue(":model","1");
     query.bindValue(":status","Search!!!");
@@ -131,7 +131,7 @@ void Order::itsNew()
     }
     Settings::S()->_db.commit();
     query.finish();
-    if(!query.exec("SELECT _id FROM orders WHERE rowid=last_insert_rowid();")){
+    if(!query.exec("SELECT _id,_date FROM orders WHERE rowid=last_insert_rowid();")){
         QMessageBox msgBox;
         msgBox.setText("При создании нового order что-то пошло не так с идом\n\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
         msgBox.exec();
@@ -139,6 +139,7 @@ void Order::itsNew()
     }
     query.next();
     code=query.value("_id").toString();
+    dateCreate=query.value("_date").toString();
 }
 
 Order::~Order()
@@ -153,8 +154,8 @@ Order::~Order()
             msgBox.exec();
             return;
         }
+        Settings::S()->_db.commit();
     }
-    Settings::S()->_db.commit();
 }
 
 void Order::setChooseCar(QString indexCar, QString nameCar)
@@ -272,3 +273,5 @@ void Order::SELECT_order()
         msgBox.exec();
     };
 }
+
+

@@ -6,8 +6,9 @@
 
 class PhoneTable:public BaseTableView
 {
+    QString parentOrder;
 public:
-    PhoneTable(QWidget * parent):BaseTableView(parent){}
+    PhoneTable(QWidget * parent,QString parentOrder):BaseTableView(parent),parentOrder(parentOrder){}
     void mouseDoubleClickEvent(QMouseEvent *event);
 };
 

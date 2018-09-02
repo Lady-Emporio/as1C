@@ -117,3 +117,26 @@ void TableChoose::mouseDoubleClickEvent(QMouseEvent *event)
         }
     }
 }
+
+
+void Order::action_phones_list()
+{
+    QString title="Phones list for:"+code;
+    QList<QMdiSubWindow *>	allSub=Settings::S()->MW->mdiArea->subWindowList();
+    for(auto x:allSub){
+        if(x->windowTitle()==title){
+            Settings::S()->MW->mdiArea->setActiveSubWindow(x);
+            x->move(0,0);
+            return;
+        };
+    };
+    QMdiSubWindow *subWindow = new QMdiSubWindow(Settings::S()->MW->mdiArea);
+    subWindow->setWindowTitle(title);
+
+    PhonesList *phonesList=new PhonesList(subWindow,code);
+
+    subWindow->setWidget(phonesList);
+    Settings::S()->MW->mdiArea->addSubWindow(subWindow);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow->show();
+}

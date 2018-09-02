@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     BaseObject/subtable.cpp \
     Documents/Phone/phoneslist.cpp \
     Documents/Phone/phone.cpp \
-    mw_opens/phones_open.cpp
+    mw_opens/phones_open.cpp \
+    BaseObject/delegate.cpp \
+    Documents/Call/call.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
@@ -36,4 +38,6 @@ HEADERS  += mainwindow.h \
     BaseObject/basechoose.h \
     BaseObject/subtable.h \
     Documents/Phone/phoneslist.h \
-    Documents/Phone/phone.h
+    Documents/Phone/phone.h \
+    BaseObject/delegate.h \
+    Documents/Call/call.h

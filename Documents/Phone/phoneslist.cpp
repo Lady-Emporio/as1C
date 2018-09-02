@@ -13,7 +13,7 @@ PhonesList::PhonesList(QWidget *parent,QString parentOrder) : BaseTable(parent),
     }
     isDelegate=false;
     makeGui();
-    tableTree=new PhoneTable(this);
+    tableTree=new PhoneTable(this,parentOrder);
     tableTree->table_name="Phone list";
     tableTree->setModel(modelSql);
     tableTree->setSortingEnabled(true);

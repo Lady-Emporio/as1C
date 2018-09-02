@@ -26,7 +26,7 @@ public:
     void sig_chooseCar(QWidget *senderOrder);
     void sig_openOrder(QString code);
 //phones
-
+    void sig_openPhone(QString code, QString parentOrder);
 };
 
 #endif // MAINWINDOW_H
