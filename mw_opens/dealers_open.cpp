@@ -12,7 +12,7 @@ void DealerTable::mouseDoubleClickEvent(QMouseEvent *event)
 }
 
 
-void MainWindow::sig_openDealer(QString code)
+void MainWindow::sig_openDealer(QString code, QMap<QString, QString> *par)
 {
     QString title="Dealer:"+code;
     QList<QMdiSubWindow *>	allSub=Settings::S()->MW->mdiArea->subWindowList();
@@ -26,7 +26,7 @@ void MainWindow::sig_openDealer(QString code)
     QMdiSubWindow *subWindow = new QMdiSubWindow(Settings::S()->MW->mdiArea);
     subWindow->setWindowTitle(title);
 
-    Dealers *exist_dealer=new Dealers(subWindow,code);
+    Dealers *exist_dealer=new Dealers(subWindow,code,par);
 
     subWindow->setWidget(exist_dealer);
     Settings::S()->MW->mdiArea->addSubWindow(subWindow);

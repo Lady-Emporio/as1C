@@ -11,6 +11,7 @@ void Phone::makeGui()
     QLabel * idLabel=new QLabel("id",this);
     QLabel * orderLabel=new QLabel("Order",this);
     idRec=new QLineEdit(code,this);
+    idRec->setReadOnly(true);
     orderRec=new QLineEdit(parentOrder,this);
     statucRec=new QComboBox(this);
     dateRec=new QLabel(dateCreate,this);
@@ -20,6 +21,7 @@ void Phone::makeGui()
     statucRec->insertItem(3,"Wait");
     QHBoxLayout * r2Layout=new QHBoxLayout(this);
     QLabel *ordersLabel=new QLabel("orders",this);
+    ordersLabel->setSizePolicy(QSizePolicy ::Maximum   , QSizePolicy ::Maximum);
     orders_presentation=new QLabel(this);
     r2Layout->addWidget(ordersLabel);
     r2Layout->addWidget(orders_presentation);
@@ -129,6 +131,9 @@ Phone::Phone(QWidget *parent, QString code,QString parentOrder) : QWidget(parent
         itsNew();
     }
     makeGui();
+    if(!DELETEIfNotCreate){
+        SELECT_phone();
+    }
 }
 
 void Phone::UPDATE_phone()
@@ -178,13 +183,31 @@ void Phone::SELECT_phone()
     dateRec->setText(dateCreate);
     orderRec->setText(parentOrder);
     statucRec->setCurrentText(query.value("_f_status").toString());
+    qDebug()<<parentOrder<<"parentOrder";
     if(""!=parentOrder){
+        qDebug()<<getOrderPresentation(parentOrder);
         orders_presentation->setText(getOrderPresentation(parentOrder));
     }
     if(!callsTable->modelCall->select()){
         QMessageBox msgBox;
         msgBox.setText("Не получается select call\n\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
         msgBox.exec();
+    }
+    callsTable->modelCall->setObjectName("Phone:|"+code+"|for order:|"+parentOrder+"|dateCreate:|"+dateCreate);
+    int maxRow=callsTable->modelCall->rowCount();
+    TableModelForCall * model=callsTable->modelCall;
+    for(int i=0;i!=maxRow;++i){
+        QString dealer=model->data( model->index(i,3),Qt::DisplayRole).toString();
+        QStringList nameDateMailActive=getDealersFromFile(dealer);
+        QString nameDealer=nameDateMailActive.at(0);
+        if(0!=nameDateMailActive.at(2)){
+            nameDealer="@"+nameDealer;
+        }
+        QString lastDate=nameDateMailActive.at(1);
+        QString activePhone=nameDateMailActive.at(3);
+        model->setData(model->index(i,4),activePhone);
+        model->setData(model->index(i,8),lastDate);
+        model->setData(model->index(i,7),nameDealer);
     }
 }
 
@@ -264,6 +287,7 @@ void Phone::action_chooseFile()
 
 QStringList Phone::getDealersFromFile(QString dealer)
 {
+    qDebug()<<dealer;
     QSqlQuery query(Settings::S()->_db);
     query.prepare("SELECT "
                   " dealers._name as _name, "

@@ -27,6 +27,8 @@ QVariant TableModelForCall::data(const QModelIndex &idx, int role) const
         return QSqlTableModel::data(idx);
     }else if(Qt::EditRole==role){
         return QSqlTableModel::data(idx);
+    }else if(Qt::WhatsThisRole==role){
+        return QSqlTableModel::data(idx,Qt::WhatsThisRole);
     }
     return QVariant();
 }

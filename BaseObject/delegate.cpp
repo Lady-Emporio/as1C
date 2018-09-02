@@ -1,5 +1,5 @@
 #include "delegate.h"
-
+#include "mainwindow.h"
 ComboBoxDelegate::ComboBoxDelegate(QObject *parent)
 :QItemDelegate(parent)
 {
@@ -60,6 +60,16 @@ QWidget *DelegateForCall::createEditor(QWidget *parent, const QStyleOptionViewIt
         Items<<""<<"Красный"<<"Зеленый"<<"Синий"<<"Коричневый"<<"Желтый"<<"Фиолетовый";
         editor->addItems(Items);
         return editor;
+    }else if(7==index.column()){
+        QString dealerCode=index.model()->index(index.row(),3).data().toString();
+        QMap<QString,QString>*par=new QMap<QString,QString>;
+        par->insert("AddPhone","AddPhone");
+
+        par->insert("full_call|_date",index.model()->index(index.row(),12).data().toString());
+        par->insert("full_call|_comment",index.model()->index(index.row(),14).data().toString());
+        par->insert("full_call|_source",index.model()->objectName());
+        Settings::S()->MW->sig_openDealer(dealerCode,par);
+        return nullptr;
     }else{
         return new QLineEdit(parent);
     }

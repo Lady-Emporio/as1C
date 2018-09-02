@@ -33,7 +33,4 @@ void Subtable::hideColumn()
 {
     this->tableView->hideColumn(indexColumnToHide);
     this->tableView->hideColumn(parentColumnToHide);
-    if(-1!=dateIndex){
-       this->tableView->hideColumn(dateIndex);
-    }
 }

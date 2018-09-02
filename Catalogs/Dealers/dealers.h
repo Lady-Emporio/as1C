@@ -18,9 +18,9 @@ class Dealers : public QWidget
     QPushButton*hideFullCallButton;
     QPushButton*hideEmailButton;
     void makeGui();
+    void insertFromPhone(QMap<QString,QString> par);
 public:
-    explicit Dealers(QWidget *parent,QString code);
-
+    explicit Dealers(QWidget *parent,QString code,QMap<QString,QString>*par=nullptr);
 signals:
 public slots:
     void action_HideFullCall();

@@ -1,9 +1,12 @@
 #include "dealers.h"
 
-Dealers::Dealers(QWidget *parent, QString code) : QWidget(parent),code(code)
+Dealers::Dealers(QWidget *parent, QString code, QMap<QString, QString> *par) : QWidget(parent),code(code)
 {
     makeGui();
     fillAll();
+    if(par!=nullptr && par->contains("AddPhone")){
+        insertFromPhone(*par);
+    }
 }
 
 void Dealers::makeGui()
@@ -84,6 +87,17 @@ void Dealers::makeGui()
     connect(hideEmailButton, SIGNAL(clicked()), this, SLOT(action_HideEmail()));
     connect(commitButton, SIGNAL(clicked()), this, SLOT(action_WriteInDB()));
     connect(defaultButton, SIGNAL(clicked()), this, SLOT(fillAll()));
+}
+
+void Dealers::insertFromPhone(QMap<QString, QString> par)
+{
+    int newRow=full_call->modelTable->rowCount();
+    full_call->modelTable->insertRow(newRow);
+    full_call->modelTable->setData(full_call->modelTable->index(newRow,1),par.value("full_call|_date"));
+    full_call->modelTable->setData(full_call->modelTable->index(newRow,2),par.value("full_call|_comment"));
+    full_call->modelTable->setData(full_call->modelTable->index(newRow,3),par.value("full_call|_source"));
+    full_call->modelTable->setData(full_call->modelTable->index(newRow,4),code);
+    full_call->tableView->setStyleSheet("background-color:rgb(43,94,72);");
 }
 
 void Dealers::action_HideFullCall()
