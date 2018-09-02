@@ -48,13 +48,4 @@ void Dealers_list::action_Refresh()
     }
 }
 
-void DealerTable::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    QModelIndex currentI=this->indexAt(event->pos());
-    if(currentI!=QModelIndex()){
-        int row=currentI.row();
-        QSqlTableModel *model=(QSqlTableModel*)this->model();
-        QString dealerCode=model->index(row,0).data().toString();
-        qDebug()<<dealerCode;
-    }
-}
+

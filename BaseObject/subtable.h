@@ -17,6 +17,7 @@ signals:
 
 public slots:
     void action_addRow();
+    void hideColumn();
 };
 
 #endif // SUBTABLE_H

@@ -10,6 +10,7 @@
 #include "Documents/Phone/phoneslist.h"
 #include "Documents/Phone/phone.h"
 #include "Catalogs/Dealers/dealers_list.h"
+#include "Catalogs/Dealers/dealers.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -29,6 +30,8 @@ public:
     void sig_openOrder(QString code);
 //phones
     void sig_openPhone(QString code, QString parentOrder);
+//dealer
+    void sig_openDealer(QString code);
 };
 
 #endif // MAINWINDOW_H

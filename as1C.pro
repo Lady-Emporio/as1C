@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     BaseObject/delegate.cpp \
     Documents/Call/call.cpp \
     Catalogs/Dealers/dealers.cpp \
-    Catalogs/Dealers/dealers_list.cpp
+    Catalogs/Dealers/dealers_list.cpp \
+    mw_opens/dealers_open.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
