@@ -26,7 +26,9 @@ SOURCES += main.cpp\
     Documents/Phone/phone.cpp \
     mw_opens/phones_open.cpp \
     BaseObject/delegate.cpp \
-    Documents/Call/call.cpp
+    Documents/Call/call.cpp \
+    Catalogs/Dealers/dealers.cpp \
+    Catalogs/Dealers/dealers_list.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
@@ -40,4 +42,6 @@ HEADERS  += mainwindow.h \
     Documents/Phone/phoneslist.h \
     Documents/Phone/phone.h \
     BaseObject/delegate.h \
-    Documents/Call/call.h
+    Documents/Call/call.h \
+    Catalogs/Dealers/dealers.h \
+    Catalogs/Dealers/dealers_list.h

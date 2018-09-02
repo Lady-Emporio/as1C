@@ -34,6 +34,7 @@ public:
     explicit BaseTable(QWidget *parent = 0);
     void hideFilter();
     bool isDelegate;
+    bool notUseTableView;
 public slots:
     void action_addRow();
     void action_refreshModel();

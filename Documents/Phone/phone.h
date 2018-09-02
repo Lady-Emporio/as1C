@@ -33,6 +33,8 @@ signals:
 public slots:
     void UPDATE_phone();
     void SELECT_phone();
+    void action_chooseFile();
+    QStringList getDealersFromFile(QString dealer);
 };
 
 #endif // PHONE_H

@@ -17,23 +17,25 @@ void BaseTable::makeGui()
     filterLayout->addWidget(setFilterButton);
     mainLayout->addLayout(filterLayout);
 
-    tableView=new BaseTableView(this);
-    tableView->setSortingEnabled(true);
-    if(modelTable!=nullptr){
-        modelTable->setEditStrategy(QSqlTableModel::OnManualSubmit);
-        tableView->setModel(modelTable);
-        mainLayout->addWidget(tableView);
-    }else if(modelRelational!=nullptr){
-        modelRelational->setEditStrategy(QSqlTableModel::OnManualSubmit);
-        tableView->setModel(modelRelational);
-        if(isDelegate){
-            tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
-        }
-    }else if(nullptr!=modelSql){
-        tableView->setModel(modelSql);
+    if(!notUseTableView){
+        tableView=new BaseTableView(this);
+        tableView->setSortingEnabled(true);
+        if(modelTable!=nullptr){
+            modelTable->setEditStrategy(QSqlTableModel::OnManualSubmit);
+            tableView->setModel(modelTable);
+            mainLayout->addWidget(tableView);
+        }else if(modelRelational!=nullptr){
+            modelRelational->setEditStrategy(QSqlTableModel::OnManualSubmit);
+            tableView->setModel(modelRelational);
+            if(isDelegate){
+                tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
+            }
+        }else if(nullptr!=modelSql){
+            tableView->setModel(modelSql);
 
+        }
+        mainLayout->addWidget(tableView);
     }
-    mainLayout->addWidget(tableView);
     commitButton=new QPushButton("commit",this);
     mainLayout->addWidget(commitButton);
     mainMenu->addAction("New",this,SLOT(action_addRow()));
@@ -45,6 +47,7 @@ void BaseTable::makeGui()
 BaseTable::BaseTable(QWidget *parent) : QWidget(parent)
 {
     isDelegate=true;
+    notUseTableView=false;
 }
 
 void BaseTable::hideFilter()

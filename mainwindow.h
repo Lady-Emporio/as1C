@@ -9,6 +9,7 @@
 #include "Documents/Order/order.h"
 #include "Documents/Phone/phoneslist.h"
 #include "Documents/Phone/phone.h"
+#include "Catalogs/Dealers/dealers_list.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -18,6 +19,7 @@ private slots:
     void action_active_OrdersList();
     void action_OrdersList();
     void action_Phones();
+    void action_DealersList();
 public:
     QMdiArea * mdiArea;
     MainWindow(QWidget *parent = 0);

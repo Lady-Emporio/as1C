@@ -45,6 +45,7 @@ void Phone::makeGui()
     mainLayout->setMenuBar(mainBar);
     mainBar->addAction("Save",this,SLOT(UPDATE_phone()));
     mainBar->addAction("Refresh",this,SLOT(SELECT_phone()));
+    mainBar->addAction("FromFile",this,SLOT(action_chooseFile()));
 }
 
 void Phone::itsNew()
@@ -178,4 +179,107 @@ void Phone::SELECT_phone()
         msgBox.setText("Не получается select call\n\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
         msgBox.exec();
     }
+}
+
+void Phone::action_chooseFile()
+{
+    QString file_path = QFileDialog::getOpenFileName(this,"Choose db","./");
+    if(!file_path.isEmpty()){
+        QFile file(file_path);
+        file.open(QIODevice::ReadOnly);
+        QByteArray a = file.readAll();
+        QString allText(a);
+        QStringList listText=allText.split("\n");
+        TableModelForCall * model=callsTable->modelCall;
+        model->removeRows(0,model->rowCount());
+        int i=-1;
+        for(QString row:listText){
+            if(row.isEmpty()){
+                continue;
+            }
+            QStringList rowList=row.split("\t");
+            if(rowList.length()!=7){
+                QMessageBox msgBox;
+                msgBox.setText("Странная строка, там нет 7 таб,прерываем:\n"+row);
+                msgBox.exec();
+                return;
+            }
+            ++i;
+            QString vin=rowList.at(0);
+            QString dealer=rowList.at(1);
+            QString block=rowList.at(2);
+            QString datecar=rowList.at(3);
+            QString modelCar=rowList.at(4);
+            QString option=rowList.at(5);
+            QString color=rowList.at(6);
+
+            QStringList nameDateMailActive=getDealersFromFile(dealer);
+            QString nameDealer=nameDateMailActive.at(0);
+            if(0!=nameDateMailActive.at(2)){
+                nameDealer="@"+nameDealer;
+            }
+            QString lastDate=nameDateMailActive.at(1);
+            QString activePhone=nameDateMailActive.at(3);
+
+            model->insertRow(i);
+            model->setData(model->index(i,1),code);
+            model->setData(model->index(i,2),vin);
+            model->setData(model->index(i,3),dealer);
+            model->setData(model->index(i,4),activePhone);
+            model->setData(model->index(i,5),block);
+            model->setData(model->index(i,6),datecar);
+            model->setData(model->index(i,7),nameDealer);
+            model->setData(model->index(i,8),lastDate);
+            model->setData(model->index(i,9),modelCar);
+            model->setData(model->index(i,10),option);
+            model->setData(model->index(i,11),color);
+
+//            <<" CREATE TABLE IF NOT EXISTS calls( "
+//              " _id INTEGER PRIMARY KEY NOT NULL, "
+//              " _phone INTEGER REFERENCES phone(_id) ON UPDATE CASCADE NOT NULL, "
+//              " _vinCar TEXT, "
+//              " _code_dealer TEXT, "
+//              " _activePhone TEXT, "
+//              " _blockCar TEXT, "
+//              " _dateCar TEXT, "
+//              " _dealerNameAndOpen TEXT, "
+//              " _dealerLastCall TEXT, "
+//              " _modelCar TEXT, "
+//              " _optionCar TEXT, "
+//              " _colorCar TEXT, "
+//              " _dateTalk TEXT, "
+//              " _colorTalk TEXT CHECK(_colorTalk in ('','Красный','Зеленый','Синий','Коричневый','Желтый','Фиолетовый') ), "
+//              " _commentTalk TEXT "
+
+        }
+    }
+}
+
+QStringList Phone::getDealersFromFile(QString dealer)
+{
+    QSqlQuery query(Settings::S()->_db);
+    query.prepare("SELECT "
+                  " dealers._name as _name, "
+                  " dealers._activePhone as _activePhone, "
+                  " (SELECT full_call._date FROM full_call WHERE _parent=dealers._code "
+                  " ORDER BY datetime(_date) DESC LIMIT 1 ) as lastDate, "
+                  " (SELECT ifnull(COUNT(DISTINCT email._mail),0) FROM email "
+                  " WHERE email._parent=dealers._code  ORDER BY datetime(_date) DESC LIMIT 1 ) as isEmail "
+                  " FROM dealers WHERE dealers._code=:code;");
+    query.bindValue(":code",dealer);
+    QStringList dataList;
+    if(!query.exec()){
+        QMessageBox msgBox;
+        msgBox.setText("Не получается получить данные из дилера:"+dealer+"\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
+        msgBox.exec();
+        return dataList;
+    }
+    query.next();
+    qDebug()<<query.size();
+    dataList<<query.value("_name").toString()
+            <<query.value("lastDate").toString()
+            <<query.value("isEmail").toString()
+            <<query.value("_activePhone").toString();
+    qDebug()<<dataList;
+    return dataList;
 }

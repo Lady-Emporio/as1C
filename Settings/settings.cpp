@@ -128,6 +128,7 @@ void Settings::createTables()
       " _phone INTEGER REFERENCES phone(_id) ON UPDATE CASCADE NOT NULL, "
       " _vinCar TEXT, "
       " _code_dealer TEXT, "
+      " _activePhone TEXT, "
       " _blockCar TEXT, "
       " _dateCar TEXT, "
       " _dealerNameAndOpen TEXT, "
