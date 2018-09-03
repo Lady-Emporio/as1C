@@ -26,6 +26,7 @@ signals:
 
 public slots:
     void action_addRow();
+    void action_Armors();
     //void mouseDoubleClickEvent(QMouseEvent *event);
 };
 

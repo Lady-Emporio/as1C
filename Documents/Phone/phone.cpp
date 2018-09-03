@@ -63,12 +63,12 @@ void Phone::itsNew()
     QSqlQuery query(Settings::S()->_db);
     if(""!=parentOrder){
         query.prepare("INSERT INTO phone(_orders,_date,_f_status) VALUES "
-                      " (:_orders,datetime('now'),:_f_status);");
+                      " (:_orders,datetime('now','localtime'),:_f_status);");
         query.bindValue(":_f_status","Search!!!");
         query.bindValue(":_orders",parentOrder);
     }else{
-        query.prepare("INSERT INTO phone(_f_status) VALUES "
-                      " (:_f_status);");
+        query.prepare("INSERT INTO phone(_f_status,_date) VALUES "
+                      " (:_f_status,datetime('now','localtime'));");
         query.bindValue(":_f_status","Search!!!");
     }
     if(!query.exec()){
@@ -183,7 +183,7 @@ void Phone::SELECT_phone()
     dateRec->setText(dateCreate);
     orderRec->setText(parentOrder);
     statucRec->setCurrentText(query.value("_f_status").toString());
-    qDebug()<<parentOrder<<"parentOrder";
+    qDebug()<<parentOrder<<"parentOrder"<<dateCreate;
     if(""!=parentOrder){
         qDebug()<<getOrderPresentation(parentOrder);
         orders_presentation->setText(getOrderPresentation(parentOrder));

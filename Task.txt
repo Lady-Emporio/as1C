@@ -1,32 +1,35 @@
-#include "settings.h"
+Менеджеры:
+ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 
-Settings::Settings()
-{
-    SetDefaultParams();
-    readParamsFromJson();
-    if(!openDB()){
-        return;
-    }
-    createTables();
-}
-
-bool Settings::openDB()
-{
-    QString transaction_name="Settings";
-     _db = QSqlDatabase::addDatabase("QSQLITE",transaction_name);
-     _db.setDatabaseName(parameters["path/to/db"]);
-     if (!_db.open()){
-        GetErrorMessage(nullptr,transaction_name);
-        return false;
-    };
-     _db.exec("PRAGMA foreign_keys = ON;");
-     return true;
-}
-
-void Settings::createTables()
-{
-    QStringList sqls;
-    sqls<<"CREATE TABLE IF NOT EXISTS cars( "
+    BEST 0-генерация брони от order.
+	+1-менеджеры -добавить группу чисто для менеджеров. Сейчас запрос:
+		model->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0",Settings::S()->_db);
+	изменить на: "SELECT _code FROM managers WHERE _folder=0 and _mark=0 and _parent='OnlyManagers'"
+	+2-изменить при создание время на : "select datetime('now','localtime');" Сейчас отстает на 3 часа.
+	3- нашел авто, нужно добавить успешный поиск и отчет.
+	4- добавить phone по умолчанию.  
+	5- trade
+	  CREATE TABLE IF NOT EXISTS trade(
+	  " _id integer PRIMARY KEY NOT NULL,"
+	  " _date TEXT,"
+	  " _status TEXT check( _folder='Учитывать в отчете по поиску' or _folder='Не учитывать в отчете') NOT NULL DEFAULT 'Учитывать в отчете по поиску'"
+	  " _orders INTEGER REFERENCES orders(_id ) ON UPDATE CASCADE,"
+	  
+	 " _dealer text REFERENCES dealers(_code) ON UPDATE CASCADE NOT NULL "
+	 QLabelPresentation
+	 " _comment TEXT, "
+	 " _color_option_trade TEXT," 
+	 
+	 "giveAwayCar",
+	 "giveAwayVin",
+	 "giveAwayDate",
+	 "getCar",
+	 "getVin",
+	 "getDate",
+	6-QDateTimeEdit  QDateTimeEdit can be configured to allow a QCalendarWidget to be used to select dates. This is enabled by setting the calendarPopup property. 
+	  
+	  
+ sqls<<"CREATE TABLE IF NOT EXISTS cars( "
           " _id integer PRIMARY KEY NOT NULL,"
           " _code TEXT NOT NULL, "
           " _name TEXT NOT NULL, "
@@ -73,15 +76,12 @@ void Settings::createTables()
     <<" CREATE TABLE IF NOT EXISTS managers( "
       " _code TEXT PRIMARY KEY NOT NULL, "
       " _fullName TEXT, "
-      " _nameForArmour TEXT, "
       " _mark integer CHECK (_mark=0 or _mark=1) DEFAULT 0, "
       " _parent TEXT REFERENCES managers(_code) ON UPDATE CASCADE NOT NULL, "
       " _folder integer check( _folder=1 or _folder=0) NOT NULL DEFAULT 0"
       " ); "
      <<"INSERT OR IGNORE INTO managers(_code,_fullName,_mark,_parent,_folder) VALUES "
        " ('root','root','0','root',1);"
-    <<"INSERT OR IGNORE INTO managers(_code,_fullName,_mark,_parent,_folder) VALUES "
-      " ('OnlyManagers','only managers dir','0','root',1);"
     <<"INSERT OR IGNORE INTO managers(_code,_fullName,_mark,_parent,_folder) VALUES "
       " ('default','default manager','0','root',0);"
     <<" CREATE TABLE IF NOT EXISTS orders( "
@@ -144,143 +144,3 @@ void Settings::createTables()
       " _commentTalk TEXT "
       " ); "
     ;
-
-    for(QString sql:sqls){
-        QSqlQuery query(_db);
-        if(!query.exec(sql)){
-            QMessageBox msgBox;
-            msgBox.setText(_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
-            msgBox.exec();
-            return;
-        }
-    }
-    _db.commit();
-}
-
-void Settings::readParamsFromJson()
-{
-    QFile file("style.json");
-    if(!file.exists()){
-        writeParamsToJson();
-        return;
-    }
-    file.open(QIODevice::ReadOnly);
-    QJsonDocument document = QJsonDocument::fromJson(file.readAll());
-    file.close();
-    QJsonObject root=document.object();
-
-    QMapIterator<QString, QString> i(parameters);
-    while (i.hasNext()) {
-        i.next();
-        if(!root.contains(i.key())){
-            insertParamsInJson(i.key(),i.value());
-        }else{
-            parameters[i.key()]=root[i.key()].toString();
-        }
-    };
-}
-
-void Settings::writeParamsToJson()
-{
-    QMapIterator<QString, QString> i(parameters);
-    QJsonObject root;
-    while (i.hasNext()) {
-        i.next();
-        QJsonValue JSvalue(i.value());
-        root.insert(i.key(), JSvalue);
-    };
-    QJsonDocument new_doc(root);
-    QFile jsonFile("style.json");
-    jsonFile.open(QFile::WriteOnly);
-    jsonFile.write(new_doc.toJson());
-    jsonFile.close();
-}
-
-void Settings::insertParamsInJson(QString key,QString value)
-{
-    QFile file("style.json");
-    file.open(QIODevice::ReadOnly);
-    QJsonDocument document = QJsonDocument::fromJson(file.readAll());
-    QJsonObject root=document.object();
-
-    QJsonValue JSvalue(value);
-    root.insert(key, JSvalue);
-
-    QJsonDocument new_doc(root);
-    QFile jsonFile("style.json");
-    jsonFile.open(QFile::WriteOnly);
-    jsonFile.write(new_doc.toJson());
-    jsonFile.close();
-}
-
-void Settings::SetDefaultParams()
-{
-    parameters.insert("path/to/db","./main.sqlite");
-    parameters.insert("app/image","./image.png");
-}
-
-QString Settings::getSqlTime()
-{
-    return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-}
-
-QStringList Settings::keys()
-{
-    return Settings::S()->parameters.keys();
-}
-
-Settings *Settings::S()
-{
-    static Settings * s=new Settings;
-    return s;
-}
-
-QString Settings::get(QString par)
-{
-    Settings * s=S();
-    if(s->parameters.contains(par)){
-        return s->parameters.value(par);
-    }else{
-        QMessageBox msgBox;
-        msgBox.setText("In settings not:"+par);
-        msgBox.exec();
-    }
-    return "";
-}
-
-void Settings::set(QMap<QString, QString> par)
-{
-    Settings * s=S();
-    QStringList keys=par.keys();
-    for(QString key: keys){
-        if(s->parameters.contains(key)){
-            s->parameters[key]=par.value(key);
-        }else{
-            QMessageBox msgBox;
-            msgBox.setText("In settings not:"+key);
-            msgBox.exec();
-        }
-    }
-    s->writeParamsToJson();
-}
-
-void Settings::GetErrorMessage(QSqlQuery *query, QString transaction)
-{
-    Settings *s=Settings::S();
-    QString error;
-    error+=transaction+" |\n";
-    error+=s->_db.lastError().text()+" |\n";
-    if(query!=nullptr){
-        error+=query->lastError().text()+" |\n";
-        error+=query->lastQuery()+" |\n";
-    }
-    QMessageBox msgBox;
-    msgBox.setText(error);
-    msgBox.exec();
-}
-
-QString Settings::shieldInection(QString text)
-{
-    text=text.replace(";","");
-    return text;
-}

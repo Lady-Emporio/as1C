@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     Documents/Call/call.cpp \
     Catalogs/Dealers/dealers.cpp \
     Catalogs/Dealers/dealers_list.cpp \
-    mw_opens/dealers_open.cpp
+    mw_opens/dealers_open.cpp \
+    BaseObject/neutral_func.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
@@ -45,4 +46,5 @@ HEADERS  += mainwindow.h \
     BaseObject/delegate.h \
     Documents/Call/call.h \
     Catalogs/Dealers/dealers.h \
-    Catalogs/Dealers/dealers_list.h
+    Catalogs/Dealers/dealers_list.h \
+    BaseObject/neutral_func.h

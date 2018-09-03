@@ -22,6 +22,16 @@ void Orders_list::action_addRow()
 
 }
 
+void Orders_list::action_Armors()
+{
+    if(tableTree->currentIndex()!=QModelIndex()){
+        QString code=tableTree->model()->index(tableTree->currentIndex().row(),0).data().toString();
+        Settings::S()->MW->sig_openArmor(code);
+    }
+}
+
+
+
 void OrdersTable::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if("Order list"==table_name){
@@ -54,6 +64,32 @@ void MainWindow::sig_openOrder(QString code)
     Settings::S()->MW->mdiArea->addSubWindow(subWindow);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
     subWindow->show();
+}
+
+void MainWindow::sig_openArmor(QString orderCode)
+{
+    QString title="Armor for:"+orderCode;
+    QList<QMdiSubWindow *>	allSub=mdiArea->subWindowList();
+    for(auto x:allSub){
+        if(x->windowTitle()==title){
+            mdiArea->setActiveSubWindow(x);
+            x->move(0,0);
+            return;
+        };
+    };
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    subWindow->setWindowTitle(title);
+
+    QString armorText=neutral_getArmor(orderCode);
+
+    QLineEdit *armorView=new QLineEdit(armorText,subWindow);
+    subWindow->setWidget(armorView);
+    mdiArea->addSubWindow(subWindow);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow->show();
+    subWindow->setFixedWidth(700);
+    mdiArea->setActiveSubWindow(subWindow);
+    subWindow->move(0,0);
 }
 
 
@@ -139,4 +175,9 @@ void Order::action_phones_list()
     Settings::S()->MW->mdiArea->addSubWindow(subWindow);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
     subWindow->show();
+}
+
+void Order::action_getArmor()
+{
+    Settings::S()->MW->sig_openArmor(this->code);
 }

@@ -43,7 +43,7 @@ void Order::makeGui()
     dateRec=new QLabel(dateCreate,this);
     managerRec=new QComboBox(this);
     QSqlQueryModel *model = new QSqlQueryModel;
-    model->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0",Settings::S()->_db);
+    model->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0 and _parent='OnlyManagers'",Settings::S()->_db);
     managerRec->setModel(model);
     managerRec->setModelColumn(0);
 
@@ -112,13 +112,14 @@ void Order::makeGui()
     mainMenu->addAction("Update",this,SLOT(UPDATE_orders()));
     mainMenu->addAction("Refresh all",this,SLOT(SELECT_order()));
     mainMenu->addAction("Phones",this,SLOT(action_phones_list()));
+    mainMenu->addAction("Armor",this,SLOT(action_getArmor()));
 }
 
 void Order::itsNew()
 {
     QSqlQuery query(Settings::S()->_db);
     query.prepare("INSERT INTO orders(_date,_manager,_model,_status) VALUES "
-                      " (datetime('now'),:manager,:model,:status);");
+                      " (datetime('now','localtime'),:manager,:model,:status);");
     query.bindValue(":manager","root");
     query.bindValue(":model","1");
     query.bindValue(":status","Search!!!");

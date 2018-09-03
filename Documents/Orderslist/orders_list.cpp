@@ -29,8 +29,7 @@ Orders_list::Orders_list(QWidget *parent,bool onlyActive) : BaseTable(parent)
         this->hideFilter();
     }
     commitButton->hide();
+
+    mainMenu->addAction("Armor",this,SLOT(action_Armors()));
 }
-
-
-
 

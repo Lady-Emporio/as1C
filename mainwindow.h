@@ -11,6 +11,7 @@
 #include "Documents/Phone/phone.h"
 #include "Catalogs/Dealers/dealers_list.h"
 #include "Catalogs/Dealers/dealers.h"
+#include "BaseObject/neutral_func.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,6 +29,7 @@ public:
 //order:
     void sig_chooseCar(QWidget *senderOrder);
     void sig_openOrder(QString code);
+    void sig_openArmor(QString orderCode);
 //phones
     void sig_openPhone(QString code, QString parentOrder);
 //dealer

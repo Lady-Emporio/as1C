@@ -35,6 +35,7 @@ public slots:
     void UPDATE_orders();
     void SELECT_order();
     void action_phones_list();
+    void action_getArmor();
 };
 
 #endif // ORDER_H
