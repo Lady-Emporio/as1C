@@ -30,7 +30,10 @@ SOURCES += main.cpp\
     Catalogs/Dealers/dealers.cpp \
     Catalogs/Dealers/dealers_list.cpp \
     mw_opens/dealers_open.cpp \
-    BaseObject/neutral_func.cpp
+    BaseObject/neutral_func.cpp \
+    Documents/Trade/trade.cpp \
+    Documents/Trade/trade_list.cpp \
+    mw_opens/trade_open.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
@@ -47,4 +50,6 @@ HEADERS  += mainwindow.h \
     Documents/Call/call.h \
     Catalogs/Dealers/dealers.h \
     Catalogs/Dealers/dealers_list.h \
-    BaseObject/neutral_func.h
+    BaseObject/neutral_func.h \
+    Documents/Trade/trade.h \
+    Documents/Trade/trade_list.h

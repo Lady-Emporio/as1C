@@ -23,6 +23,10 @@ void BaseTable::makeGui()
         if(modelTable!=nullptr){
             modelTable->setEditStrategy(QSqlTableModel::OnManualSubmit);
             tableView->setModel(modelTable);
+            tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
+            QAction *   removeAct = new QAction("remove row",this);
+            tableView->addAction(removeAct);
+            connect(removeAct, SIGNAL(triggered()), this, SLOT(delete_row()));
             mainLayout->addWidget(tableView);
         }else if(modelRelational!=nullptr){
             modelRelational->setEditStrategy(QSqlTableModel::OnManualSubmit);
@@ -118,3 +122,31 @@ void BaseTable::action_filter()
 }
 
 
+void BaseTable::delete_row()
+{
+    QModelIndex model_index=tableView->currentIndex();
+    if(model_index.column()!=-1 or model_index.row()!=-1){
+        QMap<int, QVariant> dataItem=modelTable->itemData(model_index);
+        const QAbstractItemModel *itemModel = model_index.model();
+        if (nullptr == itemModel)
+        {
+            return;
+        }
+        int row=model_index.row();
+        QString text;
+        for (int i = 0; i < modelTable->columnCount(); ++i)
+        {
+            text+="column "+QString("").setNum(i)+" :"+ modelTable->data(itemModel->index(model_index.row(),i),i).toString()+" \n";
+        }
+        QMessageBox msgBox;
+        msgBox.setText("Need delete row?");
+        msgBox.setInformativeText(text);
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+        int ret = msgBox.exec();
+        switch (ret) {
+            case QMessageBox::Yes:
+                modelTable->removeRow(row);
+                break;
+        }
+    }
+}

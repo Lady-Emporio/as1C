@@ -20,7 +20,8 @@ void MainWindow::makeGui()
     QMenu *docMenu=new QMenu("Documents",mainMenu);
     mainMenu->addMenu(docMenu);
     docMenu->addAction("All orders",this,SLOT(action_OrdersList()));
-    docMenu->addAction("Phones",this,SLOT(action_Phones()));
+    docMenu->addAction("All Phones",this,SLOT(action_Phones()));
+    docMenu->addAction("All Trade",this,SLOT(action_Trades()));
     QMenu *catalogs=new QMenu("Catalogs",mainMenu);
     mainMenu->addMenu(catalogs);
     catalogs->addAction("Dealers",this,SLOT(action_DealersList()));
@@ -64,6 +65,28 @@ void MainWindow::action_DealersList()
     Dealers_list *dealerList=new Dealers_list(subWindow);
 
     subWindow->setWidget(dealerList);
+    mdiArea->addSubWindow(subWindow);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow->show();
+}
+
+void MainWindow::action_Trades()
+{
+    QString title="Trades list";
+    QList<QMdiSubWindow *>	allSub=mdiArea->subWindowList();
+    for(auto x:allSub){
+        if(x->windowTitle()==title){
+            mdiArea->setActiveSubWindow(x);
+            x->move(0,0);
+            return;
+        };
+    };
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    subWindow->setWindowTitle(title);
+
+    Trade_list *tradeList=new Trade_list(subWindow);
+
+    subWindow->setWidget(tradeList);
     mdiArea->addSubWindow(subWindow);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
     subWindow->show();

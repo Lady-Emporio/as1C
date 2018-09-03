@@ -40,6 +40,7 @@ public slots:
     void action_refreshModel();
     void action_commitModel();
     void action_filter();
+    void delete_row();
 };
 
 #endif // BASETABLE_H

@@ -9,25 +9,23 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 	3- нашел авто, нужно добавить успешный поиск и отчет.
 	4- добавить phone по умолчанию.  
 	5- trade
-	  CREATE TABLE IF NOT EXISTS trade(
+	  "CREATE TABLE IF NOT EXISTS trade( "
 	  " _id integer PRIMARY KEY NOT NULL,"
 	  " _date TEXT,"
 	  " _status TEXT check( _folder='Учитывать в отчете по поиску' or _folder='Не учитывать в отчете') NOT NULL DEFAULT 'Учитывать в отчете по поиску'"
 	  " _orders INTEGER REFERENCES orders(_id ) ON UPDATE CASCADE,"
-	  
 	 " _dealer text REFERENCES dealers(_code) ON UPDATE CASCADE NOT NULL "
-	 QLabelPresentation
 	 " _comment TEXT, "
 	 " _color_option_trade TEXT," 
-	 
-	 "giveAwayCar",
-	 "giveAwayVin",
-	 "giveAwayDate",
-	 "getCar",
-	 "getVin",
-	 "getDate",
+	 " giveAwayCar TEXT,"
+	 " giveAwayVin TEXT,"
+	 " giveAwayDate TEXT,"
+	 " getCar TEXT,"
+	 " getVin TEXT,"
+	 " getDate TEXT);"
 	6-QDateTimeEdit  QDateTimeEdit can be configured to allow a QCalendarWidget to be used to select dates. This is enabled by setting the calendarPopup property. 
 	  
+	  QLabelPresentation
 	  
  sqls<<"CREATE TABLE IF NOT EXISTS cars( "
           " _id integer PRIMARY KEY NOT NULL,"

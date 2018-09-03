@@ -143,6 +143,20 @@ void Settings::createTables()
       " _colorTalk TEXT CHECK(_colorTalk in ('','Красный','Зеленый','Синий','Коричневый','Желтый','Фиолетовый') ), "
       " _commentTalk TEXT "
       " ); "
+    <<	  "CREATE TABLE IF NOT EXISTS trade( "
+          " _id integer PRIMARY KEY NOT NULL,"
+          " _date TEXT,"
+          " _status TEXT check( _status='Учитывать в отчете по поиску' or _status='Не учитывать в отчете') DEFAULT 'Учитывать в отчете по поиску',"
+          " _orders INTEGER REFERENCES orders(_id ) ON UPDATE CASCADE,"
+         " _dealer text REFERENCES dealers(_code) ON UPDATE CASCADE, "
+         " _comment TEXT, "
+         " _color_option_trade TEXT,"
+         " _giveAwayCar TEXT,"
+         " _giveAwayVin TEXT,"
+         " _giveAwayDate TEXT,"
+         " _getCar TEXT,"
+         " _getVin TEXT,"
+         " _getDate TEXT);"
     ;
 
     for(QString sql:sqls){

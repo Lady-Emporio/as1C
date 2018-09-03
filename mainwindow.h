@@ -12,6 +12,8 @@
 #include "Catalogs/Dealers/dealers_list.h"
 #include "Catalogs/Dealers/dealers.h"
 #include "BaseObject/neutral_func.h"
+#include "Documents/Trade/trade_list.h"
+#include "Documents/Trade/trade.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -22,6 +24,7 @@ private slots:
     void action_OrdersList();
     void action_Phones();
     void action_DealersList();
+    void action_Trades();
 public:
     QMdiArea * mdiArea;
     MainWindow(QWidget *parent = 0);
