@@ -1,4 +1,4 @@
-Менеджеры:
+﻿Менеджеры:
 ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 
     BEST 0-генерация брони от order.
@@ -23,7 +23,7 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 	 " getCar TEXT,"
 	 " getVin TEXT,"
 	 " getDate TEXT);"
-	6-QDateTimeEdit  QDateTimeEdit can be configured to allow a QCalendarWidget to be used to select dates. This is enabled by setting the calendarPopup property. 
+	+6-QDateTimeEdit  QDateTimeEdit can be configured to allow a QCalendarWidget to be used to select dates. This is enabled by setting the calendarPopup property. 
 	  
 	  QLabelPresentation
 	  
@@ -74,7 +74,7 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 		" ('KNA', 'Серая комета [KNA]'); "
 		 
 		 
-    9-order presentation к чертям летит. Ставится последняя. дописать: " WHERE orders._id=NEW._id " в конец
+    +9-order presentation к чертям летит. Ставится последняя. дописать: " WHERE orders._id=NEW._id " в конец
 	<<" CREATE TRIGGER IF NOT EXISTS orders_presentation_inser AFTER INSERT ON orders "
       " BEGIN  "
       "     UPDATE orders SET _presentation=NEW._manager||' for '||NEW._client||' in '||NEW._workList  WHERE orders._id=NEW._id ; "
@@ -144,7 +144,7 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 		trade._date >= '2018-08-31' and trade._date < '2018-10-01'
 		and trade._status='Учитывать в отчете по поиску';
 	
-	Для отчета нужна таблица: destinyTrade
+	+++++++ Для отчета нужна таблица: destinyTrade
 	  "CREATE TABLE IF NOT EXISTS destinyTrade( "
 	  " _parentTrade INTEGER PRIMARY KEY REFERENCES trade(_id) ON UPDATE CASCADE,"
 	  " _boughtCliend TEXT,"

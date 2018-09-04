@@ -15,6 +15,7 @@ class Trade : public QWidget
     QString dateCreate;
     QComboBox*_statusRec;
     QLineEdit*_ordersRec;
+    QLabel*_ordersPresentation;
     QLineEdit*_dealerRec;
     QLabel* dealerName;
     QTextEdit*_commentRec;
@@ -38,6 +39,9 @@ signals:
 
 public slots:
     void sig_selectDealers();
+    void sig_selectOrders();
+    void UPDATE_trade();
+    void SELECT_trade();
 };
 
 #endif // TRADE_H

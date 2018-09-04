@@ -8,6 +8,8 @@ Trade_list::Trade_list(QWidget *parent) : BaseTable(parent)
     modelTable->setTable("trade");
     makeGui();
     action_refreshModel();
+
+    mainMenu->addAction("Open",this,SLOT(sig_open_trade()));
 }
 
 

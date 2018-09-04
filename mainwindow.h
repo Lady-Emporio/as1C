@@ -37,6 +37,8 @@ public:
     void sig_openPhone(QString code, QString parentOrder);
 //dealer
     void sig_openDealer(QString code,QMap<QString,QString>*par=nullptr);
+//trade
+    void sig_openTrade(QString code);
 };
 
 #endif // MAINWINDOW_H

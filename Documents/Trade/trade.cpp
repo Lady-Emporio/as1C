@@ -2,27 +2,14 @@
 
 void Trade::makeGui()
 {
-//    "CREATE TABLE IF NOT EXISTS trade( "
-//        " _id integer PRIMARY KEY NOT NULL,"
-//        " _date TEXT,"
-//        " _status TEXT check( _folder='Учитывать в отчете по поиску' or _folder='Не учитывать в отчете') NOT NULL DEFAULT 'Учитывать в отчете по поиску'"
-//        " _orders INTEGER REFERENCES orders(_id ) ON UPDATE CASCADE,"
-//       " _dealer text REFERENCES dealers(_code) ON UPDATE CASCADE NOT NULL "
-//       " _comment TEXT, "
-//       " _color_option_trade TEXT,"
-//       " giveAwayCar TEXT,"
-//       " giveAwayVin TEXT,"
-//       " giveAwayDate TEXT,"
-//       " getCar TEXT,"
-//       " getVin TEXT,"
-//       " getDate TEXT);"
     QVBoxLayout * mainLayout=new QVBoxLayout(this);
     this->setLayout(mainLayout);
-    _idRec=new QLabel(this);
+    _idRec=new QLabel(code,this);
     _dateRec=new QLabel(dateCreate,this);
     _statusRec=new QComboBox(this);
     _statusRec->insertItem(0,"Учитывать в отчете по поиску");
     _statusRec->insertItem(0,"Не учитывать в отчете");
+    _ordersPresentation=new QLabel(this);
     _ordersRec=new QLineEdit(this);
     _dealerRec=new QLineEdit(this);
     dealerName=new QLabel(this);
@@ -53,6 +40,8 @@ void Trade::makeGui()
     QLabel * orderLabel=new QLabel("Order:",this);
     r2->addWidget(orderLabel);
     r2->addWidget(_ordersRec);
+    r2->addWidget(_ordersPresentation);
+
     QLabel * dealerLabel=new QLabel("Dealer:",this);
     r2->addWidget(dealerLabel);
     r2->addWidget(_dealerRec);
@@ -118,6 +107,12 @@ void Trade::makeGui()
     mainLayout->addLayout(r10);
 
     connect(_dealerRec, SIGNAL(editingFinished()), this, SLOT(sig_selectDealers()));
+    QMenuBar * mainMenu=new QMenuBar(this);
+    mainLayout->setMenuBar(mainMenu);
+    mainMenu->addAction("Update",this,SLOT(UPDATE_trade()));
+
+    connect(_ordersRec, SIGNAL(editingFinished()), this, SLOT(sig_selectOrders()));
+    mainMenu->addAction("Refresh all",this,SLOT(SELECT_trade()));
 }
 
 void Trade::itsNew()
@@ -167,6 +162,10 @@ Trade::Trade(QWidget *parent, QString code) : QWidget(parent),code(code)
         itsNew();
     }
     makeGui();
+    if(!DELETEIfNotCreate){
+        this->setObjectName("Trade:"+code);
+        SELECT_trade();
+    }
 }
 
 void Trade::setChooseCar(QString chooseIndex, QString chooseName, QString labelName)
@@ -192,4 +191,124 @@ void Trade::sig_selectDealers()
     }
     query.next();
     dealerName->setText(query.value("_name").toString());
+}
+
+void Trade::sig_selectOrders()
+{
+    QSqlQuery query(Settings::S()->_db);
+    query.prepare("SELECT _presentation FROM orders WHERE _id=:code;");
+    query.bindValue(":code",_ordersRec->text());
+    if(!query.exec()){
+        return;
+    }
+    query.next();
+    _ordersPresentation->setText(query.value("_presentation").toString());
+}
+
+void Trade::UPDATE_trade()
+{
+    QSqlQuery query(Settings::S()->_db);
+    query.prepare("UPDATE trade SET "
+                  " _status=:_status,"
+                  " _orders=:_orders,"
+                  " _dealer=:_dealer, "
+                  " _comment=:_comment, "
+                  " _color_option_trade=:_color_option_trade,"
+                  " _giveAwayCar=:_giveAwayCar,"
+                  " _giveAwayVin=:_giveAwayVin,"
+                  " _giveAwayDate=:_giveAwayDate,"
+                  " _getCar=:_getCar,"
+                  " _getVin=:_getVin,"
+                  " _getDate=:_getDate "
+                  " WHERE _id=:code;");
+    query.bindValue(":code",code);
+    query.bindValue(":_status",_statusRec->currentText());
+    if(_ordersRec->text()!=""){
+        query.bindValue(":_orders",_ordersRec->text());
+    }else{
+        query.bindValue(":_orders",QVariant());
+    }
+
+    if(_dealerRec->text()!=""){
+        query.bindValue(":_dealer",_dealerRec->text());
+    }else{
+        query.bindValue(":_dealer",QVariant());
+    }
+
+    if(getCarIndexChoose!=""){
+        query.bindValue(":_getCar",getCarIndexChoose);
+    }else{
+        query.bindValue(":_getCar",QVariant());
+    }
+    if(GiveAwayCarIndexChoose!=""){
+        query.bindValue(":_giveAwayCar",GiveAwayCarIndexChoose);
+    }else{
+        query.bindValue(":_getCar",QVariant());
+    }
+
+    query.bindValue(":_comment",_commentRec->toPlainText());
+    query.bindValue(":_color_option_trade",color_optionRec->text());
+    query.bindValue(":_giveAwayVin",giveAwayVinRec->text());
+    query.bindValue(":_giveAwayDate",giveAwayDateRec->text());
+    query.bindValue(":_getVin",getVinRec->text());
+    query.bindValue(":_getDate",getDateRec->text());
+    if(!query.exec()){
+        QMessageBox msgBox;
+        msgBox.setText("Не получается сохранить trade\n\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
+        msgBox.exec();
+        return;
+    }
+    Settings::S()->_db.commit();
+    DELETEIfNotCreate=false;
+    SELECT_trade();
+}
+
+void Trade::SELECT_trade()
+{
+    QSqlQuery query(Settings::S()->_db);
+    query.prepare("SELECT "
+                  " trade._id as _id, "
+                  " trade._date as _date, "
+                  " trade._status as _status, "
+                  " trade._orders as _orders, "
+                  " trade._dealer as _dealer, "
+                  " trade._comment as _comment, "
+                  " trade._color_option_trade as _color_option_trade, "
+                  " trade._giveAwayCar as _giveAwayCarID, "
+                  " trade._giveAwayVin as _giveAwayVin, "
+                  " trade._giveAwayDate as _giveAwayDate, "
+                  " trade._getCar as _getCarID, "
+                  " trade._getVin as _getVin, "
+                  " trade._getDate as _getDate, "
+                  " (SELECT cars._name FROM cars WHERE cars._id=_giveAwayCar) as _giveAwayCar_name, "
+                  " (SELECT cars._name FROM cars WHERE cars._id=_getCar) as _getCar_name, "
+                  " (SELECT orders._presentation FROM orders WHERE orders._id=_orders) as presentation_orders "
+                  " FROM trade "
+                  " WHERE trade._id=:code;");
+    query.bindValue(":code",code);
+    if(!query.exec()){
+        QMessageBox msgBox;
+        msgBox.setText("Не получается SELECT_trade\n\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
+        msgBox.exec();
+        return;
+    }
+    query.next();
+
+    code=query.value("_id").toString();
+    _dateRec->setText(query.value("_date").toString());
+    _statusRec->setCurrentText(query.value("_status").toString());
+    _ordersRec->setText(query.value("_orders").toString());
+    _dealerRec->setText(query.value("_dealer").toString());
+    getCarIndexChoose=query.value("_getCarID").toString();
+    GiveAwayCarIndexChoose=query.value("_giveAwayCarID").toString();
+    _commentRec->setPlainText(query.value("_comment").toString());
+    color_optionRec->setText(query.value("_color_option_trade").toString());
+    giveAwayVinRec->setText(query.value("_giveAwayVin").toString());
+    giveAwayDateRec->setDate(query.value("_giveAwayDate").toDate());
+    getVinRec->setText(query.value("_getVin").toString());
+    getDateRec->setDate(query.value("_getDate").toDate());
+    getCarRec->setText(query.value("_getCar_name").toString());
+    giveAwayCarRec->setText(query.value("_giveAwayCar_name").toString());
+    _ordersPresentation->setText(query.value("presentation_orders").toString());
+    sig_selectDealers();
 }

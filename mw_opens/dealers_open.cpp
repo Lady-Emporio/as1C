@@ -33,3 +33,5 @@ void MainWindow::sig_openDealer(QString code, QMap<QString, QString> *par)
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
     subWindow->show();
 }
+
+

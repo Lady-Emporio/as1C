@@ -221,6 +221,7 @@ void Order::UPDATE_orders()
         msgBox.exec();
     };
     DELETEIfNotCreate=false;
+    Settings::S()->_db.commit();
 }
 
 void Order::SELECT_order()

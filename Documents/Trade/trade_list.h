@@ -14,6 +14,7 @@ signals:
 
 public slots:
     void action_addRow();
+    void sig_open_trade();
 };
 
 #endif // TRADE_LIST_H
