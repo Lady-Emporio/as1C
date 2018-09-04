@@ -93,7 +93,7 @@ void MainWindow::sig_openArmor(QString orderCode)
 }
 
 
-void MainWindow::sig_chooseCar(QWidget *senderOrder)
+void MainWindow::sig_chooseCar(QWidget *senderOrder, QString someData)
 {
     QString title="Choose car"+senderOrder->objectName();
     QList<QMdiSubWindow *>	allSub=Settings::S()->MW->mdiArea->subWindowList();
@@ -107,8 +107,7 @@ void MainWindow::sig_chooseCar(QWidget *senderOrder)
     QMdiSubWindow *subWindow = new QMdiSubWindow(Settings::S()->MW->mdiArea);
     subWindow->setWindowTitle(title);
 
-    baseChoose *new_order=new baseChoose(subWindow,"cars","_folder=1",senderOrder);
-
+    baseChoose *new_order=new baseChoose(subWindow,"cars","_folder=1",senderOrder,someData);
     subWindow->setWidget(new_order);
     Settings::S()->MW->mdiArea->addSubWindow(subWindow);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -118,7 +117,7 @@ void MainWindow::sig_chooseCar(QWidget *senderOrder)
 
 void LabelChoose::mouseDoubleClickEvent(QMouseEvent *)
 {
-    Settings::S()->MW->sig_chooseCar(realParent);
+    Settings::S()->MW->sig_chooseCar(realParent,this->objectName());
 }
 
 void TableChoose::mouseDoubleClickEvent(QMouseEvent *event)
@@ -145,6 +144,30 @@ void TableChoose::mouseDoubleClickEvent(QMouseEvent *event)
                     for(auto x:allSub){
                         if(x->widget()==this->parent()){
                             x->close();
+                            break;
+                        };
+                    };
+                    for(auto x:allSub){
+                        if(x->widget()==par){
+                            Settings::S()->MW->mdiArea->setActiveSubWindow(x);
+                            return;
+                        };
+                    };
+                }else if("New trade"==realParent->objectName() || realParent->objectName().startsWith("Trade:")){
+                    QString chooseIndex=model->index(row,0).data().toString();
+                    QString chooseName=model->index(row,2).data().toString();
+                    Trade *par=(Trade *)realParent;
+                    par->setChooseCar(chooseIndex,chooseName,this->objectName());
+                    QList<QMdiSubWindow *>	allSub=Settings::S()->MW->mdiArea->subWindowList();
+                    for(auto x:allSub){
+                        if(x->widget()==this->parent()){
+                            x->close();
+                            break;
+                        };
+                    };
+                    for(auto x:allSub){
+                        if(x->widget()==par){
+                            Settings::S()->MW->mdiArea->setActiveSubWindow(x);
                             return;
                         };
                     };

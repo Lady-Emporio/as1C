@@ -27,6 +27,143 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 	  
 	  QLabelPresentation
 	  
+	  
+	7-в order нужно добавить акции. Отдельная таблица:
+		"CREATE TABLE IF NOT EXISTS order_actions( "
+			" _name TEXT PRIMARY KEY NOT NULL,"
+			" _mark integer check( _mark=1 or _mark=0) DEFAULT 0);"
+	 <<"INSERT OR IGNORE INTO order_actions(_name) VALUES "
+       " ('Без акций'), " 
+       " ('Наличка трейдин'), " 
+       " ('Кредит трейдин');" 
+	в ордер вставить:
+	 " order_action TEXT REFERENCES order_actions(_name) ON UPDATE CASCADE DEFAULT 'Без акций'"
+	8-по умолчанию заполнить cars цветами:
+		"INSERT OR IGNORE INTO colors(_code,_name) VALUES "
+		" ('369', 'Белый лед [369]'), "
+		" ('676', 'Черная жемчужина [676]'), "
+		" ('D17', 'Темный каштан [D17]'), "
+		" ('D69', 'Серая платина [D69]'), "
+		" ('DNP', 'Хаки [DNP]'), "
+		" ('ENZ', 'Оранжевая аризона [ENZ]'), "
+		" ('CNM', 'Коричневый [CNM]'), "
+		" ('KNM', 'Серый базальт [KNM]'), "
+		" ('RPG', 'Синий сапфир [RPG]'), "
+		" ('RPL', 'Лазурно-синий [RPL]'), "
+		" ('XTM', 'Коричневый каштан с черной крышей [XTM]'), "
+		" ('XTN', 'Коричневый каштан с крышей цвета слоновая кость [XTN]'), "
+		" ('XTP', 'Черная жемчужина с крышей цвета слоновая кость [XTP]'), "
+		" ('XZY', 'Слоновая кость с крышей коричневый каштан [XZY]'), "
+		" ('KAD', 'Темная сталь [KAD]'), "
+		" ('NPI', 'Красный [NPI]'), "
+		" ('XTK', 'Белый лед с черной крышей [XTK]'), "
+		" ('XTL', 'Темная сталь с черной крышей [XTL]'), "
+		" ('XTR', 'Серая платина с черной крышей [XTR]'), "
+		" ('XVQ', 'Красный с черной крышей [XVQ]'), "
+		" ('YNL', 'Красный с крышей цвета слоновой кости [YNL]'), "
+		" ('RPM', 'Синяя лазурь [RPM]'), "
+		" ('XNP', 'Оранжевая Аризона с крышей цвета слоновой кости [XNP]'), "
+		" ('XTS', 'Оранжевая Аризона с черной крышей [XTS]'), "
+		" ('XTT', 'Синяя лазурь с черной крышей [XTT]'), "
+		" ('ENZ', 'Оранжевая Аризона [ENZ]'), "
+		" ('XNV', 'Синяя лазурь с крышей цвета слоновой кости [XNV]'), "
+		" ('XTQ', 'Зеленый хаки с черной крышей [XTQ]'), "
+		" ('B76', 'Красный [B76]'), "
+		" ('F90', 'Золотисто-зеленый Оникс [F90]'), "
+		" ('D42', 'Синий океан [D42]'), "
+		" ('KNA', 'Серая комета [KNA]'); "
+		 
+		 
+    9-order presentation к чертям летит. Ставится последняя. дописать: " WHERE orders._id=NEW._id " в конец
+	<<" CREATE TRIGGER IF NOT EXISTS orders_presentation_inser AFTER INSERT ON orders "
+      " BEGIN  "
+      "     UPDATE orders SET _presentation=NEW._manager||' for '||NEW._client||' in '||NEW._workList  WHERE orders._id=NEW._id ; "
+      " END; "
+    <<" CREATE TRIGGER IF NOT EXISTS orders_presentation_update AFTER UPDATE ON orders "
+      " BEGIN  "
+      "     UPDATE orders SET _presentation=NEW._manager||' for '||NEW._client||' in '||NEW._workList  WHERE orders._id=NEW._id ; "
+      " END; "
+	  
+	10- нужно выводить хотя бы отсортированный лист цветов. 
+	https://www.linux.org.ru/forum/development/11689249
+	попробовать настроить QSortFilterProxyModel для сортировки цветов. Цвет красный под индексом 10 идет в начале и цвет красный под индексом 44 идет в конце. Хочу отсортировать коды по имени, чтобы красный,красный,красный с черным, красный с базальтом шли рядом друг за другом.
+	
+	11 отчет:
+	
+	"CREATE TABLE IF NOT EXISTS trade( "
+          " _id integer PRIMARY KEY NOT NULL,"
+          " _date TEXT,"
+          " _status TEXT check( _status='Учитывать в отчете по поиску' or _status='Не учитывать в отчете') DEFAULT 'Учитывать в отчете по поиску',"
+          " _orders INTEGER REFERENCES orders(_id ) ON UPDATE CASCADE,"
+         " _dealer text REFERENCES dealers(_code) ON UPDATE CASCADE, "
+         " _comment TEXT, "
+         " _color_option_trade TEXT,"
+         " _giveAwayCar TEXT,"
+         " _giveAwayVin TEXT,"
+         " _giveAwayDate TEXT,"
+         " _getCar TEXT,"
+         " _getVin TEXT,"
+         " _getDate TEXT);"
+	Для отчета нужны колонки:
+		1-Строка//Просто нумерация ++i
+		2-Клиент купил//destinyTrade._boughtCliend
+		3-Менеджер продал//destinyTrade._soldManager
+		4-Дата реализации//destinyTrade._dateSold	
+		5-Менеджеру искал//managers._nameForArmour 
+		6-Клиент искал//orders._client
+		7-РЛ//orders._workList
+		8-Дата производства//trade._getDate
+		9-Модель полученная//trade._getCar
+		10-Вин полученного//trade._getVin	
+		11-Модель отданная//trade._giveAwayCar		
+		12-Вин отданного//trade._giveAwayVin		
+		13-ЦветаОпцииОбмена	//trade._color_option_trade	
+		14-Дата производства отданного авто//trade._giveAwayDate	
+	SELECT
+		destinyTrade._boughtCliend as _boughtCliend,
+		destinyTrade._soldManager as _soldManager,
+		destinyTrade._dateSold as _dateSold,
+		managers._nameForArmour as _nameForArmour,
+		orders._client as findForClient,
+		orders._workList as findForWorkList,
+		trade._getDate as _getDate,
+		trade._getCar as _getCar,
+		trade._getVin as _getVin,
+		trade._giveAwayCar as _giveAwayCar,
+		trade._giveAwayVin as _giveAwayVin,
+		trade._giveAwayDate as _giveAwayDate,
+		trade._color_option_trade as _color_option_trade
+	FROM trade
+	LEFT JOIN orders ON
+	  orders._id=trade._orders
+	LEFT JOIN managers ON
+		managers._code=orders._manager
+	LEFT JOIN destinyTrade ON
+		destinyTrade._parentTrade=trade._id
+	WHERE 
+		trade._date >= '2018-08-31' and trade._date < '2018-10-01'
+		and trade._status='Учитывать в отчете по поиску';
+	
+	Для отчета нужна таблица: destinyTrade
+	  "CREATE TABLE IF NOT EXISTS destinyTrade( "
+	  " _parentTrade INTEGER PRIMARY KEY REFERENCES trade(_id) ON UPDATE CASCADE,"
+	  " _boughtCliend TEXT,"
+	  " _soldManager TEXT REFERENCES managers(_code) ON UPDATE CASCADE, "
+	  " _dateSold TEXT,"
+	  " _comment TEXT);"
+	  
+	в идеале с автоматическим обновлением и добавлением:
+	  <<" CREATE TRIGGER IF NOT EXISTS create_destinyTrade_trigger AFTER INSERT ON trade "
+      " BEGIN  "
+      "     INSERT INTO destinyTrade(_parentTrade) VALUES (NEW._id);"
+      " END; "
+	
+	  " CREATE TRIGGER IF NOT EXISTS update_destinyTrade_trigger AFTER UPDATE ON trade "
+      " BEGIN  "
+      "     UPDATE destinyTrade SET _parentTrade=NEW._id WHERE destinyTrade._parentTrade=OLD._id; "
+      " END; "
+	  
+	  
  sqls<<"CREATE TABLE IF NOT EXISTS cars( "
           " _id integer PRIMARY KEY NOT NULL,"
           " _code TEXT NOT NULL, "

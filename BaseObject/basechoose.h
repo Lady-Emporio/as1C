@@ -23,10 +23,11 @@ class baseChoose : public QWidget
     TableChoose*tableGui;
     QSqlRelationalTableModel * model;
     QWidget *realParent;
+    QString someData;
 public:
     QPushButton * forFilter;
     QStringList historyFilters;
-    explicit baseChoose(QWidget *parent,QString table,QString defaultFilter,QWidget * realParent);
+    explicit baseChoose(QWidget *parent,QString table,QString defaultFilter,QWidget * realParent,QString someData);
 
 signals:
 

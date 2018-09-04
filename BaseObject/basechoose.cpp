@@ -15,6 +15,7 @@ void baseChoose::makeGui()
     model->setTable(table);
     model->select();
     TableChoose *tableView=new TableChoose(this,realParent);
+    tableView->setObjectName(someData);
     tableView->setModel(model);
     tableView->setColumnWidth(2,300);
     mainLayout->addWidget(tableView);
@@ -23,7 +24,8 @@ void baseChoose::makeGui()
     connect(forFilter, SIGNAL(clicked()), this, SLOT(action_backToFilters()));
 }
 
-baseChoose::baseChoose(QWidget *parent, QString table, QString defaultFilter,QWidget * realParent):QWidget(parent),table(table),defaultFilter(defaultFilter),realParent(realParent)
+baseChoose::baseChoose(QWidget *parent, QString table, QString defaultFilter, QWidget * realParent, QString someData):
+    QWidget(parent),table(table),defaultFilter(defaultFilter),realParent(realParent),someData(someData)
 {
     makeGui();
 }

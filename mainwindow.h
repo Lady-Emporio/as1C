@@ -30,7 +30,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 //order:
-    void sig_chooseCar(QWidget *senderOrder);
+    void sig_chooseCar(QWidget *senderOrder,QString someData);
     void sig_openOrder(QString code);
     void sig_openArmor(QString orderCode);
 //phones
