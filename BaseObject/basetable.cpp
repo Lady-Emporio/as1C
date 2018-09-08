@@ -136,7 +136,8 @@ void BaseTable::delete_row()
         QString text;
         for (int i = 0; i < modelTable->columnCount(); ++i)
         {
-            text+="column "+QString("").setNum(i)+" :"+ modelTable->data(itemModel->index(model_index.row(),i),i).toString()+" \n";
+            //text+="column "+QString("").setNum(i)+" :"+ modelTable->data(itemModel->index(model_index.row(),i).toString()+" \n";
+            text+="column "+QString("").setNum(i)+" :"+ modelTable->data(modelTable->index(row,i)).toString()+" \n";
         }
         QMessageBox msgBox;
         msgBox.setText("Need delete row?");

@@ -25,9 +25,13 @@ void MainWindow::makeGui()
     QMenu *catalogs=new QMenu("Catalogs",mainMenu);
     mainMenu->addMenu(catalogs);
     catalogs->addAction("Dealers",this,SLOT(action_DealersList()));
+    catalogs->addAction("Managers",this,SLOT(action_ManagersList()));
+    catalogs->addAction("Cars",this,SLOT(action_CarsList()));
     QMenu *reports=new QMenu("Reports",mainMenu);
     mainMenu->addMenu(reports);
     reports->addAction("Destiny car",this,SLOT(action_destinyTradeList()));
+    reports->addAction("Report",this,SLOT(action_reportForControl()));
+
 
 }
 void MainWindow::action_Phones(){
@@ -111,6 +115,69 @@ void MainWindow::action_destinyTradeList()
 
     DestinyList *destinyList=new DestinyList(subWindow);;
     subWindow->setWidget(destinyList);
+    mdiArea->addSubWindow(subWindow);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow->show();
+}
+
+void MainWindow::action_reportForControl()
+{
+    QString title="Report for control";
+    QList<QMdiSubWindow *>	allSub=mdiArea->subWindowList();
+    for(auto x:allSub){
+        if(x->windowTitle()==title){
+            mdiArea->setActiveSubWindow(x);
+            x->move(0,0);
+            return;
+        };
+    };
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    subWindow->setWindowTitle(title);
+
+    ReportForControl *report=new ReportForControl(subWindow);;
+    subWindow->setWidget(report);
+    mdiArea->addSubWindow(subWindow);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow->show();
+}
+
+void MainWindow::action_ManagersList()
+{
+    QString title="Managers list";
+    QList<QMdiSubWindow *>	allSub=mdiArea->subWindowList();
+    for(auto x:allSub){
+        if(x->windowTitle()==title){
+            mdiArea->setActiveSubWindow(x);
+            x->move(0,0);
+            return;
+        };
+    };
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    subWindow->setWindowTitle(title);
+
+    ManagersList *widget=new ManagersList(subWindow);;
+    subWindow->setWidget(widget);
+    mdiArea->addSubWindow(subWindow);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow->show();
+}
+
+void MainWindow::action_CarsList()
+{
+    QString title="Cars list";
+    QList<QMdiSubWindow *>	allSub=mdiArea->subWindowList();
+    for(auto x:allSub){
+        if(x->windowTitle()==title){
+            mdiArea->setActiveSubWindow(x);
+            x->move(0,0);
+            return;
+        };
+    };
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    subWindow->setWindowTitle(title);
+
+    CarsList *widget=new CarsList(subWindow);;
+    subWindow->setWidget(widget);
     mdiArea->addSubWindow(subWindow);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
     subWindow->show();

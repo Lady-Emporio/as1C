@@ -116,7 +116,7 @@ void Settings::createTables()
     <<"INSERT OR IGNORE INTO managers(_code,_fullName,_mark,_parent,_folder) VALUES "
       " ('OnlyManagers','only managers dir','0','root',1);"
     <<"INSERT OR IGNORE INTO managers(_code,_fullName,_mark,_parent,_folder) VALUES "
-      " ('default','default manager','0','root',0);"
+      " ('default','default manager','0','OnlyManagers',0);"
     <<"CREATE TABLE IF NOT EXISTS order_stocks( "
       " _name TEXT PRIMARY KEY NOT NULL,"
       " _mark integer check( _mark=1 or _mark=0) DEFAULT 0);"

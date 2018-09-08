@@ -35,7 +35,11 @@ SOURCES += main.cpp\
     Documents/Trade/trade_list.cpp \
     mw_opens/trade_open.cpp \
     Documents/Destiny/destinytrade.cpp \
-    Documents/Destiny/destinylist.cpp
+    Documents/Destiny/destinylist.cpp \
+    mw_opens/destiny_open.cpp \
+    Reports/reportforcontrol.cpp \
+    Catalogs/Managers/managerslist.cpp \
+    Catalogs/Cars/carslist.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
@@ -56,4 +60,7 @@ HEADERS  += mainwindow.h \
     Documents/Trade/trade.h \
     Documents/Trade/trade_list.h \
     Documents/Destiny/destinytrade.h \
-    Documents/Destiny/destinylist.h
+    Documents/Destiny/destinylist.h \
+    Reports/reportforcontrol.h \
+    Catalogs/Managers/managerslist.h \
+    Catalogs/Cars/carslist.h

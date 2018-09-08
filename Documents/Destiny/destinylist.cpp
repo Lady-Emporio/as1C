@@ -12,9 +12,24 @@ void DestinyList::makeGui()
     tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableView->setModel(modelTable);
     mainLayout->addWidget(tableView);
+    QMenuBar * mainMenu=new QMenuBar(this);
+    mainLayout->setMenuBar(mainMenu);
+    mainMenu->addAction("Open",this,SLOT(sig_open_desniny()));
+    mainMenu->addAction("Refresh",this,SLOT(action_refresh_desniny()));
 }
 
 DestinyList::DestinyList(QWidget *parent):QWidget(parent)
 {
     makeGui();
+}
+
+
+
+void DestinyList::action_refresh_desniny()
+{
+    if(!modelTable->select()){
+        QMessageBox msgBox;
+        msgBox.setText("Error with modelTable:"+modelTable->lastError().text());
+        msgBox.exec();
+    }
 }

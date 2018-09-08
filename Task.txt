@@ -103,7 +103,7 @@
 			callsTable->tableView->setItemDelegateForColumn(i,forAllColimn);
 			и в него уже пихать данные.
 	}
-	"отчет по нахождению"{
+	ВЫПОЛНЕНО+++ 08.09.2018"отчет по нахождению"{
 	
 	"CREATE TABLE IF NOT EXISTS trade( "
           " _id integer PRIMARY KEY NOT NULL,"
@@ -159,7 +159,7 @@
 		trade._date >= '2018-08-31' and trade._date < '2018-10-01'
 		and trade._status='Учитывать в отчете по поиску';
 	}
-	 ВЫПОЛНЕНО+++"Добавить destinyTrade для отчета"{
+	ВЫПОЛНЕНО+++"Добавить destinyTrade для отчета"{
 	  "CREATE TABLE IF NOT EXISTS destinyTrade( "
 	  " _parentTrade INTEGER PRIMARY KEY REFERENCES trade(_id) ON UPDATE CASCADE,"
 	  " _boughtCliend TEXT,"
@@ -178,7 +178,7 @@
       "     UPDATE destinyTrade SET _parentTrade=NEW._id WHERE destinyTrade._parentTrade=OLD._id; "
       " END; "
 	 } 
-	"Форма destinyTrade"{
+	ВЫПОЛНЕНО+++ 08.09.2018"Форма destinyTrade"{
 		QLabel *vinCar; //trade._getCar as _getCar
 		QLabel *orderPresentation//orders._presentation
 		QLabel *_parentTrade;
@@ -317,7 +317,7 @@
 	}
 	
 	}	
-	"Форма отчета по нахождению"{
+	ВЫПОЛНЕНО+++ 08.09.2018"Форма отчета по нахождению"{
 	class BaseReport{
 		
 	};
@@ -539,8 +539,12 @@ int main(int argc, char * argv[])
  }
  
  }/*Конец формы отчета*/
-
-	
+	"Убрать даты"{
+		В обмене проставляются на автомате даты. Надо их убрать. Добавить год по умолчанию.
+	}
+	"Не сохраняется trade"{
+	При сохранении trade не сохраняется car	
+	}
  
  
  

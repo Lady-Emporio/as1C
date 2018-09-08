@@ -180,6 +180,12 @@ void TableChoose::mouseDoubleClickEvent(QMouseEvent *event)
 
 void Order::action_phones_list()
 {
+    if(DELETEIfNotCreate){
+        QMessageBox msgBox;
+        msgBox.setText("Begin press update");
+        msgBox.exec();
+        return;
+    }
     QString title="Phones list for:"+code;
     QList<QMdiSubWindow *>	allSub=Settings::S()->MW->mdiArea->subWindowList();
     for(auto x:allSub){

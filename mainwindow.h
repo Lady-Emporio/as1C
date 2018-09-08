@@ -16,6 +16,9 @@
 #include "Documents/Trade/trade.h"
 #include "Documents/Destiny/destinytrade.h"
 #include "Documents/Destiny/destinylist.h"
+#include "Reports/reportforcontrol.h"
+#include "Catalogs/Managers/managerslist.h"
+#include "Catalogs/Cars/carslist.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,6 +31,9 @@ private slots:
     void action_DealersList();
     void action_Trades();
     void action_destinyTradeList();
+    void action_reportForControl();
+    void action_ManagersList();
+    void action_CarsList();
 public:
     QMdiArea * mdiArea;
     MainWindow(QWidget *parent = 0);
