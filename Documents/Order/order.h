@@ -16,6 +16,7 @@ class Order : public QWidget
     QLineEdit * clientRec;
     QLineEdit *rlRec;
     QComboBox *statusRec;
+    QComboBox *order_stock;
     QString code;
     QString dateCreate;
     QString indexCar;

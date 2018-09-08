@@ -25,6 +25,9 @@ void MainWindow::makeGui()
     QMenu *catalogs=new QMenu("Catalogs",mainMenu);
     mainMenu->addMenu(catalogs);
     catalogs->addAction("Dealers",this,SLOT(action_DealersList()));
+    QMenu *reports=new QMenu("Reports",mainMenu);
+    mainMenu->addMenu(reports);
+    reports->addAction("Destiny car",this,SLOT(action_destinyTradeList()));
 
 }
 void MainWindow::action_Phones(){
@@ -87,6 +90,27 @@ void MainWindow::action_Trades()
     Trade_list *tradeList=new Trade_list(subWindow);
 
     subWindow->setWidget(tradeList);
+    mdiArea->addSubWindow(subWindow);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow->show();
+}
+
+void MainWindow::action_destinyTradeList()
+{
+    QString title="Destiny list";
+    QList<QMdiSubWindow *>	allSub=mdiArea->subWindowList();
+    for(auto x:allSub){
+        if(x->windowTitle()==title){
+            mdiArea->setActiveSubWindow(x);
+            x->move(0,0);
+            return;
+        };
+    };
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    subWindow->setWindowTitle(title);
+
+    DestinyList *destinyList=new DestinyList(subWindow);;
+    subWindow->setWidget(destinyList);
     mdiArea->addSubWindow(subWindow);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
     subWindow->show();

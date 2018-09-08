@@ -183,26 +183,30 @@ void Trade::setChooseCar(QString chooseIndex, QString chooseName, QString labelN
 
 void Trade::sig_selectDealers()
 {
-    QSqlQuery query(Settings::S()->_db);
-    query.prepare("SELECT _name FROM dealers WHERE _code=:code;");
-    query.bindValue(":code",_dealerRec->text());
-    if(!query.exec()){
-        return;
+    if(""!=_dealerRec->text()){
+        QSqlQuery query(Settings::S()->_db);
+        query.prepare("SELECT _name FROM dealers WHERE _code=:code;");
+        query.bindValue(":code",_dealerRec->text());
+        if(!query.exec()){
+            return;
+        }
+        query.next();
+        dealerName->setText(query.value("_name").toString());
     }
-    query.next();
-    dealerName->setText(query.value("_name").toString());
 }
 
 void Trade::sig_selectOrders()
 {
-    QSqlQuery query(Settings::S()->_db);
-    query.prepare("SELECT _presentation FROM orders WHERE _id=:code;");
-    query.bindValue(":code",_ordersRec->text());
-    if(!query.exec()){
-        return;
+    if(""!=_ordersRec->text()){
+        QSqlQuery query(Settings::S()->_db);
+        query.prepare("SELECT _presentation FROM orders WHERE _id=:code;");
+        query.bindValue(":code",_ordersRec->text());
+        if(!query.exec()){
+            return;
+        }
+        query.next();
+        _ordersPresentation->setText(query.value("_presentation").toString());
     }
-    query.next();
-    _ordersPresentation->setText(query.value("_presentation").toString());
 }
 
 void Trade::UPDATE_trade()

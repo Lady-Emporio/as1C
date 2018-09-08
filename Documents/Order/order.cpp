@@ -39,12 +39,19 @@ void Order::makeGui()
     subCommentTable->tableView->hideColumn(subCommentTable->indexColumnToHide);
     subCommentTable->tableView->hideColumn(subCommentTable->parentColumnToHide);
 
+    QSqlQueryModel *modelAction = new QSqlQueryModel;
+    modelAction->setQuery("SELECT _name FROM order_stocks WHERE _mark=0",Settings::S()->_db);
+    order_stock=new QComboBox(this);
+    order_stock->setModel(modelAction);
+    order_stock->setModelColumn(0);
+
     idRec=new QLineEdit(this);
     dateRec=new QLabel(dateCreate,this);
     managerRec=new QComboBox(this);
-    QSqlQueryModel *model = new QSqlQueryModel;
-    model->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0 and _parent='OnlyManagers'",Settings::S()->_db);
-    managerRec->setModel(model);
+
+    QSqlQueryModel *modelManagers = new QSqlQueryModel;
+    modelManagers->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0 and _parent='OnlyManagers'",Settings::S()->_db);
+    managerRec->setModel(modelManagers);
     managerRec->setModelColumn(0);
 
     clientRec=new QLineEdit(this);
@@ -90,8 +97,17 @@ void Order::makeGui()
     clientLayout->addWidget(clientRec);
     QHBoxLayout * RL_Layout=new QHBoxLayout(this);
     QLabel *RLLabel=new QLabel("RL",this);
+    RLLabel->setSizePolicy(QSizePolicy ::Maximum   , QSizePolicy ::Maximum   );
     RL_Layout->addWidget(RLLabel);
     RL_Layout->addWidget(rlRec);
+
+    QHBoxLayout * stock_Layout=new QHBoxLayout(this);
+    QLabel *stockLabel=new QLabel("Stock",this);
+    stockLabel->setSizePolicy(QSizePolicy ::Maximum   , QSizePolicy ::Maximum   );
+    stock_Layout->addWidget(stockLabel);
+    stock_Layout->addWidget(order_stock);
+
+
     QVBoxLayout * carLayout=new QVBoxLayout(this);
     QLabel *carLabel=new QLabel("car",this);
     carLabel->setSizePolicy(QSizePolicy ::Maximum   , QSizePolicy ::Maximum   );
@@ -102,6 +118,7 @@ void Order::makeGui()
     leftLayout->addLayout(managerLayout);
     leftLayout->addLayout(clientLayout);
     leftLayout->addLayout(RL_Layout);
+    leftLayout->addLayout(stock_Layout);
     leftLayout->addLayout(carLayout);
     leftLayout->addWidget(subColorTable);
     leftLayout->addWidget(subOptionTable);
@@ -188,16 +205,18 @@ void Order::UPDATE_orders()
                   " _id=:_id, "
                   " _manager=:_manager, "
                   " _client=:_client, "
+                  " _order_stock=:_order_stock,"
                   " _workList=:_workList, "
                   " _model=:_model, "
                   " _status=:_status "
                   " WHERE _id=:oldId;");
     query.bindValue(":_id",idRec->text());
-    query.bindValue(":_manager",managerRec->currentText());
+    query.bindValue(":_manager",(""==managerRec->currentText() ? QVariant() : managerRec->currentText()) );
     query.bindValue(":_client",clientRec->text());
     query.bindValue(":_workList",rlRec->text());
-    query.bindValue(":_model",indexCar);
+    query.bindValue(":_model",(""==carChooseLabel->text() ? QVariant() : indexCar));
     query.bindValue(":_status",statusRec->currentText());
+    query.bindValue(":_order_stock",order_stock->currentText());
     query.bindValue(":oldId",code);
     if(!query.exec()){
         QMessageBox msgBox;
@@ -235,6 +254,7 @@ void Order::SELECT_order()
                 " orders._workList as _workList, "
                 " orders._model as _model, "
                 " orders._status as _status, "
+                " orders._order_stock as _order_stock,"
                 " cars._name as carName "
                 " FROM orders "
                 " LEFT JOIN cars ON "
@@ -258,7 +278,7 @@ void Order::SELECT_order()
     dateRec->setText(query.value("_date").toString());
     idRec->setText(query.value("_id").toString());
     carChooseLabel->setText(query.value("carName").toString());
-
+    order_stock->setCurrentText(query.value("_order_stock").toString());
     if(!subCommentTable->modelTable->select()){
         QMessageBox msgBox;
         msgBox.setText("Не получается select subCommentTable\n\n"+Settings::S()->_db.lastError().text()+" |\n "+subCommentTable->modelTable->lastError().text());

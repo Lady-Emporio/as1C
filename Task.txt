@@ -1,14 +1,16 @@
-﻿Менеджеры:
-ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
+﻿task структурированный:
+	[ВЫПОЛНЕНО [ДАТА]]+++"{Задача}" {Описание}
 
-    BEST 0-генерация брони от order.
-	+1-менеджеры -добавить группу чисто для менеджеров. Сейчас запрос:
+
+    ВЫПОЛНЕНО+++"Формирование брони" { 
+	0-генерация брони от order. Менеджеры: ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;}	
+	ВЫПОЛНЕНО+++"Группировать менеджеров" {1-менеджеры -добавить группу чисто для менеджеров. Сейчас запрос:
 		model->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0",Settings::S()->_db);
 	изменить на: "SELECT _code FROM managers WHERE _folder=0 and _mark=0 and _parent='OnlyManagers'"
-	+2-изменить при создание время на : "select datetime('now','localtime');" Сейчас отстает на 3 часа.
-	3- нашел авто, нужно добавить успешный поиск и отчет.
-	4- добавить phone по умолчанию.  
-	5- trade
+	}
+	ВЫПОЛНЕНО+++"Использовать текущее время, а не utf"{
+		2-изменить при создание время на : "select datetime('now','localtime');" Сейчас отстает на 3 часа.}  
+	ВЫПОЛНЕНО+++"trade"{
 	  "CREATE TABLE IF NOT EXISTS trade( "
 	  " _id integer PRIMARY KEY NOT NULL,"
 	  " _date TEXT,"
@@ -23,22 +25,23 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 	 " getCar TEXT,"
 	 " getVin TEXT,"
 	 " getDate TEXT);"
-	+6-QDateTimeEdit  QDateTimeEdit can be configured to allow a QCalendarWidget to be used to select dates. This is enabled by setting the calendarPopup property. 
-	  
-	  QLabelPresentation
-	  
-	  
-	7-в order нужно добавить акции. Отдельная таблица:
-		"CREATE TABLE IF NOT EXISTS order_actions( "
+	}
+	ВЫПОЛНЕНО+++"QDateTimeEdit"{
+		QDateTimeEdit can be configured to allow a QCalendarWidget to be used to select dates. This is enabled by setting the calendarPopup property. 
+	}
+	ВЫПОЛНЕНО+++ 06.09.2018 "добавить акции в order для брони"{
+		в order нужно добавить акции. Отдельная таблица:
+		"CREATE TABLE IF NOT EXISTS order_stocks( "
 			" _name TEXT PRIMARY KEY NOT NULL,"
 			" _mark integer check( _mark=1 or _mark=0) DEFAULT 0);"
-	 <<"INSERT OR IGNORE INTO order_actions(_name) VALUES "
+	 <<"INSERT OR IGNORE INTO order_stocks(_name) VALUES "
        " ('Без акций'), " 
        " ('Наличка трейдин'), " 
        " ('Кредит трейдин');" 
 	в ордер вставить:
-	 " order_action TEXT REFERENCES order_actions(_name) ON UPDATE CASCADE DEFAULT 'Без акций'"
-	8-по умолчанию заполнить cars цветами:
+	 " order_action TEXT REFERENCES order_stocks(_name) ON UPDATE CASCADE DEFAULT 'Без акций'"
+	}
+	ВЫПОЛНЕНО+++ 06.09.2018 "Ввести несколько цветов по умолчанию"{:
 		"INSERT OR IGNORE INTO colors(_code,_name) VALUES "
 		" ('369', 'Белый лед [369]'), "
 		" ('676', 'Черная жемчужина [676]'), "
@@ -72,8 +75,8 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 		" ('F90', 'Золотисто-зеленый Оникс [F90]'), "
 		" ('D42', 'Синий океан [D42]'), "
 		" ('KNA', 'Серая комета [KNA]'); "
-		 
-		 
+	}	 
+	ВЫПОЛНЕНО+++"Исправить-одна presentation дл order"{ 
     +9-order presentation к чертям летит. Ставится последняя. дописать: " WHERE orders._id=NEW._id " в конец
 	<<" CREATE TRIGGER IF NOT EXISTS orders_presentation_inser AFTER INSERT ON orders "
       " BEGIN  "
@@ -83,12 +86,24 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
       " BEGIN  "
       "     UPDATE orders SET _presentation=NEW._manager||' for '||NEW._client||' in '||NEW._workList  WHERE orders._id=NEW._id ; "
       " END; "
-	  
-	10- нужно выводить хотя бы отсортированный лист цветов. 
+	}
+	"Группировка цветов по имени вместе"{
+		нужно выводить хотя бы отсортированный лист цветов. 
 	https://www.linux.org.ru/forum/development/11689249
 	попробовать настроить QSortFilterProxyModel для сортировки цветов. Цвет красный под индексом 10 идет в начале и цвет красный под индексом 44 идет в конце. Хочу отсортировать коды по имени, чтобы красный,красный,красный с черным, красный с базальтом шли рядом друг за другом.
-	
-	11 отчет:
+	Сейчас используется QSqlRelationalTableModel
+		subColorTable=new Subtable(this,0,2,code,-1);
+		subColorTable->modelRelational=new QSqlRelationalTableModel(this,Settings::S()->_db);
+	сортировку не сделать, это таблица: ид,кодЦвета,Родитель.
+		QSqlRelation просто данные дает. Более развернутый QIndexModel
+		Можно попробовать переопределить делегат и дать ему уже отсортированную таблицу. И индексы поправить.
+			tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
+		или QSortFilterProxyModel в делегат запихнуть.
+		Или просто как с phone сделать: в данной колонке изменить Editor:
+			callsTable->tableView->setItemDelegateForColumn(i,forAllColimn);
+			и в него уже пихать данные.
+	}
+	"отчет по нахождению"{
 	
 	"CREATE TABLE IF NOT EXISTS trade( "
           " _id integer PRIMARY KEY NOT NULL,"
@@ -143,8 +158,8 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 	WHERE 
 		trade._date >= '2018-08-31' and trade._date < '2018-10-01'
 		and trade._status='Учитывать в отчете по поиску';
-	
-	+++++++ Для отчета нужна таблица: destinyTrade
+	}
+	 ВЫПОЛНЕНО+++"Добавить destinyTrade для отчета"{
 	  "CREATE TABLE IF NOT EXISTS destinyTrade( "
 	  " _parentTrade INTEGER PRIMARY KEY REFERENCES trade(_id) ON UPDATE CASCADE,"
 	  " _boughtCliend TEXT,"
@@ -152,7 +167,7 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
 	  " _dateSold TEXT,"
 	  " _comment TEXT);"
 	  
-	в идеале с автоматическим обновлением и добавлением:
+	+++++++ в идеале с автоматическим обновлением и добавлением:
 	  <<" CREATE TRIGGER IF NOT EXISTS create_destinyTrade_trigger AFTER INSERT ON trade "
       " BEGIN  "
       "     INSERT INTO destinyTrade(_parentTrade) VALUES (NEW._id);"
@@ -162,120 +177,373 @@ ALTER TABLE managers ADD COLUMN _nameForArmour TEXT;
       " BEGIN  "
       "     UPDATE destinyTrade SET _parentTrade=NEW._id WHERE destinyTrade._parentTrade=OLD._id; "
       " END; "
-	  
-	  
- sqls<<"CREATE TABLE IF NOT EXISTS cars( "
-          " _id integer PRIMARY KEY NOT NULL,"
-          " _code TEXT NOT NULL, "
-          " _name TEXT NOT NULL, "
-          " _parentCode TEXT REFERENCES cars(_id) ON UPDATE CASCADE,"
-          " _folder integer check( _folder=1 or _folder=0) NOT NULL"
-          " ); "
-       <<"CREATE UNIQUE INDEX IF NOT EXISTS cars_index ON cars(_code,_name,_parentCode);"
-       <<"INSERT OR IGNORE INTO cars(_id,_code,_name,_parentCode,_folder) VALUES "
-         "(0,'root','root',0,1);"
-      <<"INSERT OR IGNORE INTO cars(_id,_code,_name,_parentCode,_folder) VALUES "
-        "(1,'Empty model root','Empty model root',0,0);"
-       <<"CREATE TABLE IF NOT EXISTS colors( "
-         "   _id integer PRIMARY KEY NOT NULL, "
-         "  _code text NOT NULL, "
-         " _name text NOT NULL "
-         "); "
-      <<"CREATE UNIQUE INDEX IF NOT EXISTS color_index ON colors(_code,_name);"
-     <<"CREATE TABLE IF NOT EXISTS cars_colors(  "
-       " _car integer REFERENCES cars(_id)  ON UPDATE CASCADE NOT NULL,  "
-       " _color integer REFERENCES colors(_id)  ON UPDATE CASCADE NOT NULL "
-       " ); "
-    <<"CREATE UNIQUE INDEX IF NOT EXISTS car_color_index ON cars_colors(_car,_color);"
-    <<" CREATE TABLE IF NOT EXISTS dealers( "
-      " _code TEXT PRIMARY KEY NOT NULL, "
-      " _name TEXT, "
-      " _comment TEXT, "
-      " _activePhone TEXT, "
-      " _distryPhone TEXT "
-      " ); "
-    <<" CREATE TABLE IF NOT EXISTS full_call( "
-      " _id INTEGER PRIMARY KEY NOT NULL, "
-      " _date TEXT, "
-      " _comment TEXT, "
-      " _source TEXT, "
-      " _parent text REFERENCES dealers(_code) ON UPDATE CASCADE NOT NULL "
-      " ); "
-    <<" CREATE TABLE IF NOT EXISTS email( "
-      " _id INTEGER PRIMARY KEY NOT NULL, "
-      " _date TEXT, "
-      " _mail TEXT, "
-      " _comment TEXT, "
-      " _parent text REFERENCES dealers(_code) ON UPDATE CASCADE NOT NULL "
-      " ); "
-    <<" CREATE TABLE IF NOT EXISTS managers( "
-      " _code TEXT PRIMARY KEY NOT NULL, "
-      " _fullName TEXT, "
-      " _mark integer CHECK (_mark=0 or _mark=1) DEFAULT 0, "
-      " _parent TEXT REFERENCES managers(_code) ON UPDATE CASCADE NOT NULL, "
-      " _folder integer check( _folder=1 or _folder=0) NOT NULL DEFAULT 0"
-      " ); "
-     <<"INSERT OR IGNORE INTO managers(_code,_fullName,_mark,_parent,_folder) VALUES "
-       " ('root','root','0','root',1);"
-    <<"INSERT OR IGNORE INTO managers(_code,_fullName,_mark,_parent,_folder) VALUES "
-      " ('default','default manager','0','root',0);"
-    <<" CREATE TABLE IF NOT EXISTS orders( "
-      " _id INTEGER PRIMARY KEY NOT NULL, "
-      " _date TEXT, "
-      " _manager TEXT REFERENCES managers(_code) ON UPDATE CASCADE NOT NULL, "
-      " _client TEXT, "
-      " _workList TEXT, "
-      " _model integer REFERENCES cars(_id) ON UPDATE CASCADE NOT NULL, "
-      " _mark integer CHECK (_mark=0 or _mark=1), "
-      " _status text CHECK(_status='' or _status='Search!!!' or _status='Cancel' or _status='Found' or _status='Wait'),"
-      " _presentation text "
-      " ); "
-    <<"INSERT OR IGNORE INTO orders(_id,_manager,_client,_model,_workList) VALUES "
-      " (0,'default','default orders',1,'default orders');"
-    <<" CREATE TABLE IF NOT EXISTS orders_color( "
-      " _id INTEGER PRIMARY KEY NOT NULL, "
-      " _color INTEGER REFERENCES colors(_id) ON UPDATE CASCADE NOT NULL, "
-      " _parent integer REFERENCES orders(_id) ON UPDATE CASCADE NOT NULL "
-      " ); "
-    <<" CREATE TABLE IF NOT EXISTS orders_option( "
-      " _id INTEGER PRIMARY KEY NOT NULL, "
-      " _option TEXT NOT NULL,"
-      " _parent integer REFERENCES orders(_id) ON UPDATE CASCADE NOT NULL "
-      " ); "
-    <<" CREATE TABLE IF NOT EXISTS order_timeline( "
-      "_id INTEGER PRIMARY KEY NOT NULL, "
-      " _date TEXT, "
-      " _comment TEXT,"
-      " _parent integer REFERENCES orders(_id) ON UPDATE CASCADE NOT NULL "
-      " ); "
-    <<" CREATE TRIGGER IF NOT EXISTS orders_presentation_inser AFTER INSERT ON orders "
-      " BEGIN  "
-      "     UPDATE orders SET _presentation=NEW._manager||' for '||NEW._client||' in '||NEW._workList; "
-      " END; "
-    <<" CREATE TRIGGER IF NOT EXISTS orders_presentation_update AFTER UPDATE ON orders "
-      " BEGIN  "
-      "     UPDATE orders SET _presentation=NEW._manager||' for '||NEW._client||' in '||NEW._workList; "
-      " END; "
-    <<" CREATE TABLE IF NOT EXISTS phone( "
-      " _id INTEGER PRIMARY KEY NOT NULL, "
-      " _orders INTEGER REFERENCES orders(_id ) ON UPDATE CASCADE, "
-      " _date TEXT,"
-      " _f_status TEXT CHECK(_f_status in ('Search!!!','Cancel','Found','Wait') ) );"
-    <<" CREATE TABLE IF NOT EXISTS calls( "
-      " _id INTEGER PRIMARY KEY NOT NULL, "
-      " _phone INTEGER REFERENCES phone(_id) ON UPDATE CASCADE NOT NULL, "
-      " _vinCar TEXT, "
-      " _code_dealer TEXT, "
-      " _activePhone TEXT, "
-      " _blockCar TEXT, "
-      " _dateCar TEXT, "
-      " _dealerNameAndOpen TEXT, "
-      " _dealerLastCall TEXT, "
-      " _modelCar TEXT, "
-      " _optionCar TEXT, "
-      " _colorCar TEXT, "
-      " _dateTalk TEXT, "
-      " _colorTalk TEXT CHECK(_colorTalk in ('','Красный','Зеленый','Синий','Коричневый','Желтый','Фиолетовый') ), "
-      " _commentTalk TEXT "
-      " ); "
-    ;
+	 } 
+	"Форма destinyTrade"{
+		QLabel *vinCar; //trade._getCar as _getCar
+		QLabel *orderPresentation//orders._presentation
+		QLabel *_parentTrade;
+		QLineEdit *boughtClient;
+		QComboBox *soldManager;
+		QDateEdit*dateSold;
+		QLineEdit*comment;
+		
+		QString code;
+		
+	void makeGui(){
+		vinCar= new QLabel(this);
+		orderPresentation=new QLabel(this);
+		parentTrade=new QLabel(this);
+		boughtClient=new QLineEdit(this);
+		soldManager=new QComboBox(this);
+		dateSold=new QDateEdit(QDate::currentDate(),this);
+		dateSold->setCalendarPopup(true);
+		dateSold->setDisplayFormat("yyyy-MM-dd");
+		comment=new QLibeEdit(this);
+		
+		QVBoxLayout * mainLayout=new QVBoxLayout(this);
+		this->setLayout(mainLayout);
+		
+		QVBoxLayout * tradeLayout=new QVBoxLayout(this);
+		QLabel * tradeLabel=new QLabel("trade:",this);
+		tradeLabel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+		tradeLayout->addWidget(tradeLabel);
+		tradeLayout->addWidget(parentTrade);
+		mainLayout->addLayout(tradeLayout);
+		
+		QVBoxLayout * orderLayout=new QVBoxLayout(this);
+		QLabel * orderLabel=new QLabel("For:",this);
+		orderLabel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+		orderLayout->addWidget(orderLabel);
+		orderLayout->addWidget(orderPresentation);
+		mainLayout->addLayout(orderLayout);
+		
+		QVBoxLayout * vinLayout=new QVBoxLayout(this);
+		QLabel * vinLabel=new QLabel("Vin:",this);
+		vinLabel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+		vinLayout->addWidget(vinLabel);
+		vinLayout->addWidget(vinCar);
+		mainLayout->addLayout(vinLayout);
+		
+		QVBoxLayout * clientLayout=new QVBoxLayout(this);
+		QLabel * clientLabel=new QLabel("Bought client:",this);
+		clientLabel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+		clientLayout->addWidget(clientLabel);
+		clientLayout->addWidget(boughtClient);
+		mainLayout->addLayout(clientLayout);
+		
+		QVBoxLayout * managerLayout=new QVBoxLayout(this);
+		QLabel * managerLabel=new QLabel("Sell manager:",this);
+		managerLabel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+		managerLayout->addWidget(managerLabel);
+		managerLayout->addWidget(soldManager);
+		mainLayout->addLayout(managerLayout);
+		
+		QVBoxLayout * dateSoldLayout=new QVBoxLayout(this);
+		QLabel * sellDateLabel=new QLabel("Sell date:",this);
+		sellDateLabel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+		dateSoldLayout->addWidget(sellDateLabel);
+		dateSoldLayout->addWidget(dateSold);
+		mainLayout->addLayout(dateSoldLayout);
+		
+		QVBoxLayout * commentLayout=new QVBoxLayout(this);
+		QLabel * commentLabel=new QLabel("Sell date:",this);
+		commentLabel->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+		commentLayout->addWidget(commentLabel);
+		commentLayout->addWidget(comment);
+		mainLayout->addLayout(commentLayout);
+		
+		QMenuBar * mainMenu=new QMenuBar(this);
+		mainLayout->setMenuBar(mainMenu);
+		mainMenu->addAction("Update",this,SLOT(UPDATE_destiny()));
+		mainMenu->addAction("Refresh all",this,SLOT(SELECT_destiny()));
+	}
+	
+	void SELECT_destiny(){
+		QSqlQuery query(Settings::S()->_db);
+		query.prepare("SELECT "
+		" destinyTrade._parentTrade as code, "
+		" destinyTrade._boughtCliend as _boughtCliend, "
+		" destinyTrade._soldManager as _soldManager, "
+		" destinyTrade._dateSold as _dateSold, "
+		" destinyTrade._comment as _comment, "
+		" trade._getVin  as _getVin, "
+		" orders._presentation as _presentation "
+		" FROM destinyTrade "
+		" LEFT JOIN trade ON "
+		" destinyTrade._parentTrade=trade._id "
+		" LEFT JOIN orders ON "
+		" trade._orders=orders._id "
+		" WHERE _parentTrade=:code;");
+		query.bindValue(":code",code);
+		if(!query.exec()){
+			QMessageBox msgBox;
+			msgBox.setText("Не получается SELECT_destiny\n\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
+			msgBox.exec();
+		}
+		query.next();
+		code=query.value("code").toString();
+		_parentTrade->setText(code);
+		vinCar->setText(query.value("_getVin").toString());
+		orderPresentation->setText(query.value("_presentation").toString());
+		boughtClient->setText(query.value("_boughtCliend").toString());
+		soldManager->setCurrentText(query.value("_soldManager").toString());
+		dateSold->setDate(query.value("_dateSold").toDate());
+		comment->setText(query.value("_comment").toString());
+	}
+	
+	void UPDATE_destiny(){
+		" _parentTrade INTEGER PRIMARY KEY REFERENCES trade(_id) ON UPDATE CASCADE,"
+       " _boughtCliend TEXT,"
+       " _soldManager TEXT REFERENCES managers(_code) ON UPDATE CASCADE, "
+       " _dateSold TEXT,"
+       " _comment TEXT);"
+		QSqlQuery query(Settings::S()->_db);
+		query.prepare("UPDATE  destinyTrade SET "
+		" _boughtCliend=:_boughtCliend, "
+		" _dateSold=:_dateSold, "
+		" _soldManager=:_soldManager, "
+		" _comment=:_comment "
+		" WHERE _parentTrade =:code");
+		query.bindValue(":code",code);
+		query.bindValue(":_boughtCliend",boughtClient->text());
+		query.bindValue(":_dateSold",dateSold->text());
+		query.bindValue(":_soldManager",soldManager->currentText());
+		query.bindValue(":_comment",comment->text());
+		if(!query.exec()){
+			QMessageBox msgBox;
+			msgBox.setText("Не получается UPDATE_destiny\n\n"+Settings::S()->_db.lastError().text()+" |\n "+query.lastError().text()+" |\n "+query.lastQuery());
+			msgBox.exec();
+		}
+	}
+	
+	}	
+	"Форма отчета по нахождению"{
+	class BaseReport{
+		
+	};
+	class ReportForPrint:BaseReport{
+		
+	}
+	class ReportALl:BaseReport{
+		
+	};
+	
+QDateTimeEdit для начала периода и конца периода.
+//https://github.com/AlexisVaBel/QtReport/blob/master/report/reporter.cpp
+QTextDocument//-основа его и выводим в widget
+QTextCursor//для работы с QTextDocument
+//в QTextBlockFormat QTextTableFormat все делаем.
+
+m_document(new QTextDocument()),
+m_cursor(m_document)
+
+Reporter::~Reporter(){
+    delete m_document;
+}
+
+void Reporter::setDateDoc(){
+    m_cursor.movePosition(QTextCursor::End);
+    if(m_iCntTbls>0){
+        m_cursor.insertBlock();
+        m_cursor.insertBlock();
+        m_cursor.movePosition(QTextCursor::End);
+    }
+    m_cursor.insertText(QDateTime::currentDateTime().toString("dd.MM.yy hh:mm"));
+}
+void Reporter::setCompanyDoc(QString str){
+    m_cursor.movePosition(QTextCursor::End);
+    if(m_iCntTbls>0){
+        m_cursor.insertBlock();
+        m_cursor.insertBlock();
+        m_cursor.movePosition(QTextCursor::End);
+    }
+    QTextBlockFormat blockFrm;
+    QTextBlockFormat blockRght;
+    blockFrm.setTopMargin(5);
+    blockFrm.setBottomMargin(5);
+    blockFrm.setAlignment(Qt::AlignLeft);
+    blockFrm.setBackground(QBrush(QColor("lightGray")));
+    blockRght.setAlignment(Qt::AlignRight);
+    blockRght.setBackground(QBrush(QColor("lightGray")));
+    m_cursor.insertBlock(blockFrm);
+    m_cursor.insertText(str);
+    m_cursor.insertBlock(blockRght);
+    setDateDoc();
+}
+void Reporter::setCaptionDoc(QString str){
+    m_cursor.movePosition(QTextCursor::End);
+    if(m_iCntTbls>0){
+        m_cursor.insertBlock();
+        m_cursor.insertBlock();
+        m_cursor.movePosition(QTextCursor::End);
+    }
+    QTextBlockFormat blockFrm;
+    blockFrm.setTopMargin(5);
+    blockFrm.setBottomMargin(5);
+    blockFrm.setAlignment(Qt::AlignCenter);
+    m_cursor.insertBlock(blockFrm);
+    m_cursor.insertText(str);
+}
+void Reporter::setDataHeader(QStringList strLst){
+    m_cursor.movePosition(QTextCursor::End);
+    if(m_iCntTbls>0){
+        m_cursor.insertBlock();
+        m_cursor.insertBlock();
+        m_cursor.movePosition(QTextCursor::End);
+    }
+    QBrush  borderBrush(Qt::SolidPattern);
+    QTextTableFormat tableFormat;
+    tableFormat.setCellPadding(5);
+    tableFormat.setCellSpacing(0);
+    tableFormat.setHeaderRowCount(1);
+    tableFormat.setBorderBrush(borderBrush);
+    tableFormat.setBorderStyle(QTextFrameFormat::BorderStyle_Ridge);
+    tableFormat.setBorder(1);
+    tableFormat.setWidth(QTextLength(QTextLength::PercentageLength,100));    
+    m_cursor.insertTable(1,strLst.count(),tableFormat);
+    foreach(QString str, strLst){
+        m_cursor.insertText(str);
+        m_cursor.movePosition(QTextCursor::NextCell);
+    }
+    m_iCntTbls++;
+    m_iColCnt=strLst.count();
+}
+
+QPainter painter(this);
+QRect rec(0,0,this->width(),this->height());
+m_reporter->getTextDoc()->drawContents(&painter,rec);
+
+////////QTextTableFormat /////
+QTextCursor cur = textEdit->textCursor();
+cur.insertTable(5, 3); //таблица 5х3
+
+int main(int argc, char * argv[])
+{
+    int rows = 6;
+    int columns = 2;
+
+    QApplication app(argc, argv);
+    QTextEdit *textEdit = new QTextEdit;
+    QTextCursor cursor(textEdit->textCursor());
+    cursor.movePosition(QTextCursor::Start);
+
+    QTextTableFormat tableFormat;
+    tableFormat.setAlignment(Qt::AlignHCenter);
+    tableFormat.setCellPadding(2);
+    tableFormat.setCellSpacing(2);
+    QTextTable *table = cursor.insertTable(rows, columns);
+    table->setFormat(tableFormat);
+    
+    QTextCharFormat boldFormat;
+    boldFormat.setFontWeight(QFont::Bold);
+
+    QTextBlockFormat centerFormat;
+    centerFormat.setAlignment(Qt::AlignHCenter);
+    cursor.mergeBlockFormat(centerFormat);
+
+    cursor = table->cellAt(0, 0).firstCursorPosition();
+    cursor.insertText(("Details"), boldFormat);
+
+    cursor = table->cellAt(1, 0).firstCursorPosition();
+    cursor.insertText("Alan");
+
+    cursor = table->cellAt(1, 1).firstCursorPosition();
+    cursor.insertText("5, Pickety Street");
+
+
+    table->mergeCells(0, 0, 1, 2);
+ 
+    table->splitCell(0, 0, 1, 1);
+
+
+    textEdit->show();
+    return app.exec();
+}
+
+ QTextTableFormat tableFormat; //создать формат таблицы
+ tableFormat.setAlignment(Qt::AlignHCenter); //выравнивание
+ tableFormat.setBackground(QColor("#EEEEEE")); //фоновый цвет
+ tableFormat.setCellPadding(4); //отступ от края ячейки
+ tableFormat.setCellSpacing(0); //промежуток между ячейками
+ QVector <QTextLength> constraints; //7 столбцов по 15% шириной
+ constraints << QTextLength(QTextLength::PercentageLength, 15)
+             << QTextLength(QTextLength::PercentageLength, 15)
+             << QTextLength(QTextLength::PercentageLength, 15)
+             << QTextLength(QTextLength::PercentageLength, 15)
+             << QTextLength(QTextLength::PercentageLength, 15)
+             << QTextLength(QTextLength::PercentageLength, 15)
+             << QTextLength(QTextLength::PercentageLength, 15);
+ tableFormat.setColumnWidthConstraints(constraints);
+
+ QTextTable *table = cursor.insertTable(1, 7, tableFormat);
+  //создать таблицу из 1 строки и 7 описанных выше столбцов
+
+ QTextCharFormat format = cursor.charFormat(); //общий формат
+ format.setFontPointSize(fontSize); //поставить размер шрифта
+
+ QTextCharFormat boldFormat = format;
+ boldFormat.setFontWeight(QFont::Bold); //жирный
+
+ QTextCharFormat highlightedFormat = boldFormat;
+ highlightedFormat.setBackground(Qt::yellow); //подсвеченный жёлтым
+
+ QTextBlockFormat centerAlignment; //равнять по центру
+ centerAlignment.setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+ QTextBlockFormat rightAlignment; //равнять направо
+ rightAlignment.setAlignment(Qt::AlignRight);
+
+ for (int weekDay = 0; weekDay < 7; weekDay++) { //подписи дней недели
+  QTextTableCell cell = table->cellAt(0, weekDay); //в нулевой строке
+  QTextCursor cellCursor = cell.firstCursorPosition();
+  cellCursor.setBlockFormat(centerAlignment);
+  cellCursor.insertText(QString("%1").
+   arg(QDate::longDayName(weekDay+1)),boldFormat);
+ }
+
+ table->insertRows(table->rows(), 1); //вставить подписи
+
+ while (date.month() == selectedDate.month()) { //для текущего месяца
+  int weekDay = date.dayOfWeek(); //1=Пн, ...,  7 =Вс
+  QTextTableCell cell = table->cellAt(table->rows()-1, weekDay-1);
+  QTextCursor cellCursor = cell.firstCursorPosition();
+  cellCursor.setBlockFormat(rightAlignment);
+  //текущую дату - желтым, иначе обычным
+  if (date == QDate::currentDate())
+   cellCursor.insertText(QString("%1").arg(date.day()), highlightedFormat);
+  else
+   cellCursor.insertText(QString("%1").arg(date.day()), format);
+  date = date.addDays(1); //следующий день
+  if (weekDay == 7 && date.month() == selectedDate.month())
+   table->insertRows(table->rows(), 1); //добавить строчку, если пора
+ }
+
+ cursor.endEditBlock(); //завершить редактирование
+ setWindowTitle(tr("Календарь на %1 %2"). //титул окна
+  arg(QDate::longMonthName(selectedDate.month())).
+  arg(selectedDate.year()));
+
+
+ void MainWindow::setFontSize(int size) {
+  fontSize = size;
+  insertCalendar();
+ }
+
+ void MainWindow::setMonth(int month) {
+  selectedDate = QDate(selectedDate.year(), month + 1, selectedDate.day());
+  insertCalendar();
+ }
+
+ void MainWindow::setYear(QDate date) {
+  selectedDate = QDate(date.year(), selectedDate.month(), selectedDate.day());
+  insertCalendar();
+ }
+ 
+ }/*Конец формы отчета*/
+
+	
+ 
+ 
+ 
+ 
+ 
+ 

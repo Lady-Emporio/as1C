@@ -33,7 +33,9 @@ SOURCES += main.cpp\
     BaseObject/neutral_func.cpp \
     Documents/Trade/trade.cpp \
     Documents/Trade/trade_list.cpp \
-    mw_opens/trade_open.cpp
+    mw_opens/trade_open.cpp \
+    Documents/Destiny/destinytrade.cpp \
+    Documents/Destiny/destinylist.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
@@ -52,4 +54,6 @@ HEADERS  += mainwindow.h \
     Catalogs/Dealers/dealers_list.h \
     BaseObject/neutral_func.h \
     Documents/Trade/trade.h \
-    Documents/Trade/trade_list.h
+    Documents/Trade/trade_list.h \
+    Documents/Destiny/destinytrade.h \
+    Documents/Destiny/destinylist.h

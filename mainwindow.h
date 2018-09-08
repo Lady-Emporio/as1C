@@ -14,6 +14,8 @@
 #include "BaseObject/neutral_func.h"
 #include "Documents/Trade/trade_list.h"
 #include "Documents/Trade/trade.h"
+#include "Documents/Destiny/destinytrade.h"
+#include "Documents/Destiny/destinylist.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -25,6 +27,7 @@ private slots:
     void action_Phones();
     void action_DealersList();
     void action_Trades();
+    void action_destinyTradeList();
 public:
     QMdiArea * mdiArea;
     MainWindow(QWidget *parent = 0);
