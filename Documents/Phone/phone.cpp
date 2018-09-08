@@ -55,11 +55,11 @@ void Phone::makeGui()
     QMenu * tableActions=new QMenu(mainBar);
     mainBar->addMenu(tableActions);
     mainBar->addAction("show/hide",this,SLOT(action_showHide()));
+    connect(orderRec, SIGNAL(editingFinished()), this, SLOT(sig_selectOrders()));
 }
 
 void Phone::itsNew()
 {
-    qDebug()<<parentOrder;
     QSqlQuery query(Settings::S()->_db);
     if(""!=parentOrder){
         query.prepare("INSERT INTO phone(_orders,_date,_f_status) VALUES "
@@ -356,5 +356,12 @@ void Phone::action_showHide()
         //callsTable->tableView->hideColumn(13);
         //callsTable->tableView->hideColumn(14);
         status=0;
+    }
+}
+
+void Phone::sig_selectOrders()
+{
+    if(""!=orderRec->text()){
+        orders_presentation->setText(getOrderPresentation(orderRec->text()));
     }
 }

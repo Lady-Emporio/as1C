@@ -102,7 +102,11 @@ void DestinyTrade::UPDATE_destiny()
     }else{
         query.bindValue(":_dateSold",dateSold->text());
     }
-    query.bindValue(":_soldManager",soldManager->currentText());
+    if("default"!=soldManager->currentText()){
+        query.bindValue(":_soldManager",soldManager->currentText());
+    }else{
+        query.bindValue(":_soldManager",QVariant());
+    }
     query.bindValue(":_comment",comment->text());
     if(!query.exec()){
         QMessageBox msgBox;

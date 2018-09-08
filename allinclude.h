@@ -35,4 +35,5 @@
 #include <QSqlRecord>
 #include <QDateTimeEdit>
 #include <QTextTable>
+#include <QHeaderView>
 #endif // ALLINCLUDE_H

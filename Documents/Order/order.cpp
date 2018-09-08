@@ -16,6 +16,7 @@ void Order::makeGui()
     subColorTable->commitButton->hide();
     subColorTable->tableView->hideColumn(subColorTable->indexColumnToHide);
     subColorTable->tableView->hideColumn(subColorTable->parentColumnToHide);
+    subColorTable->tableView->horizontalHeader()->setStretchLastSection(true);
 
     subOptionTable=new Subtable(this,0,2,code,-1);
     subOptionTable->modelRelational=nullptr;
@@ -27,6 +28,7 @@ void Order::makeGui()
     subOptionTable->commitButton->hide();
     subOptionTable->tableView->hideColumn(subOptionTable->indexColumnToHide);
     subOptionTable->tableView->hideColumn(subOptionTable->parentColumnToHide);
+    subOptionTable->tableView->horizontalHeader()->setStretchLastSection(true);
 
     subCommentTable=new Subtable(this,0,3,code,1);
     subCommentTable->modelRelational=nullptr;
@@ -38,6 +40,7 @@ void Order::makeGui()
     subCommentTable->commitButton->hide();
     subCommentTable->tableView->hideColumn(subCommentTable->indexColumnToHide);
     subCommentTable->tableView->hideColumn(subCommentTable->parentColumnToHide);
+    subCommentTable->tableView->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQueryModel *modelAction = new QSqlQueryModel;
     modelAction->setQuery("SELECT _name FROM order_stocks WHERE _mark=0",Settings::S()->_db);
@@ -211,7 +214,7 @@ void Order::UPDATE_orders()
                   " _status=:_status "
                   " WHERE _id=:oldId;");
     query.bindValue(":_id",idRec->text());
-    query.bindValue(":_manager",(""==managerRec->currentText() ? QVariant() : managerRec->currentText()) );
+    query.bindValue(":_manager",("default"==managerRec->currentText() ? QVariant() : managerRec->currentText()) );
     query.bindValue(":_client",clientRec->text());
     query.bindValue(":_workList",rlRec->text());
     query.bindValue(":_model",(""==carChooseLabel->text() ? QVariant() : indexCar));

@@ -18,16 +18,15 @@ void Trade::makeGui()
     giveAwayCarRec=new LabelChoose(this,this);
     giveAwayCarRec->setObjectName("giveAwayCarRec");
     giveAwayVinRec=new QLineEdit(this);
-    giveAwayDateRec=new QDateEdit(QDate::currentDate(),this);
+    giveAwayDateRec=new QDateEdit(QDate::fromString("0000-01-01","yyyy-MM-dd"),this);
     giveAwayDateRec->setCalendarPopup(true);
     giveAwayDateRec->setDisplayFormat("yyyy-MM-dd");
     getCarRec=new LabelChoose(this,this);
     getCarRec->setObjectName("getCarRec");
     getVinRec=new QLineEdit(this);
-    getDateRec=new QDateEdit(QDate::currentDate(),this);
+    getDateRec=new QDateEdit(QDate::fromString("0000-01-01","yyyy-MM-dd"),this);
     getDateRec->setCalendarPopup(true);
     getDateRec->setDisplayFormat("yyyy-MM-dd");
-
     QHBoxLayout *r1=new QHBoxLayout(this);
     QLabel * idLabel=new QLabel("id:",this);
     r1->addWidget(idLabel);
@@ -170,6 +169,7 @@ Trade::Trade(QWidget *parent, QString code) : QWidget(parent),code(code)
 
 void Trade::setChooseCar(QString chooseIndex, QString chooseName, QString labelName)
 {
+    qDebug()<<chooseIndex <<chooseName <<labelName;
     if("getCarRec"==labelName){
         getCarIndexChoose=chooseIndex;
         getCarNameChoose=chooseName;
@@ -247,7 +247,7 @@ void Trade::UPDATE_trade()
     if(GiveAwayCarIndexChoose!=""){
         query.bindValue(":_giveAwayCar",GiveAwayCarIndexChoose);
     }else{
-        query.bindValue(":_getCar",QVariant());
+        query.bindValue(":_giveAwayCar",QVariant());
     }
 
     query.bindValue(":_comment",_commentRec->toPlainText());
