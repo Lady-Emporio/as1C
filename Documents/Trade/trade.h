@@ -13,7 +13,7 @@ class Trade : public QWidget
     QLabel*_idRec;
     QLabel*_dateRec;
     QString dateCreate;
-    QComboBox*_statusRec;
+    MyComboBox*_statusRec;
     QLineEdit*_ordersRec;
     QLabel*_ordersPresentation;
     QLineEdit*_dealerRec;

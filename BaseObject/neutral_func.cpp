@@ -6,6 +6,7 @@ QString neutral_getArmor(QString orderCode)
     QString sql="select "
            " managers._nameForArmour as _nameForArmour, "
             " orders._client as _client, "
+            " orders._order_stock as _order_stock, "
             " orders._workList as _workList"
             " from orders "
             " left join managers on "
@@ -20,6 +21,6 @@ QString neutral_getArmor(QString orderCode)
         return "";
     }
     query.next();
-    QString armorText="A/м найден "+QDate::currentDate().toString("yyyy-MM-dd")+" "+query.value("_nameForArmour").toString()+" для "+query.value("_client").toString()+" РЛ "+query.value("_workList").toString()+" до п"+QDate::currentDate().addDays(7).toString("dd.MM");
+    QString armorText="A/м найден "+QDate::currentDate().toString("yyyy-MM-dd")+" "+query.value("_nameForArmour").toString()+" для "+query.value("_client").toString()+" РЛ "+query.value("_workList").toString()+" "+query.value("_order_stock").toString() +" до п"+QDate::currentDate().addDays(7).toString("dd.MM");
     return armorText;
 }

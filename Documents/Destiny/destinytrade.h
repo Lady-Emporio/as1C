@@ -13,7 +13,7 @@ public:
     QLabel *orderPresentation;//orders._presentation
     QLabel *parentTrade;
     QLineEdit *boughtClient;
-    QComboBox *soldManager;
+    MyComboBox *soldManager;
     QDateEdit*dateSold;
     QLineEdit*comment;
     explicit DestinyTrade(QWidget *parent,QString code);

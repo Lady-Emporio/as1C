@@ -28,7 +28,6 @@ class ColorTextDelegate : public QItemDelegate
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
     {
         QStyleOptionViewItem op(option);
-        qDebug()<<index.data().toString();
         QPalette palette;
         QColor color=QColor(255,0,0);
         op.palette.setColor(QPalette::Text, color);
@@ -40,6 +39,7 @@ class ColorTextDelegate : public QItemDelegate
         QItemDelegate::paint(painter, op, index);
     }
 };
+
 
 
 #endif // DELEGATE_H

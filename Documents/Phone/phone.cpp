@@ -13,7 +13,7 @@ void Phone::makeGui()
     idRec=new QLineEdit(code,this);
     idRec->setReadOnly(true);
     orderRec=new QLineEdit(parentOrder,this);
-    statucRec=new QComboBox(this);
+    statucRec=new MyComboBox(this);
     dateRec=new QLabel(dateCreate,this);
     statucRec->insertItem(0,"Search!!!");
     statucRec->insertItem(1,"Cancel");
@@ -145,7 +145,11 @@ void Phone::UPDATE_phone()
                   " _f_status=:_f_status "
                   " WHERE _id=:oldId;");
     query.bindValue(":_id",idRec->text());
-    query.bindValue(":_orders",orderRec->text());
+    if(""==orderRec->text()){
+        query.bindValue(":_orders",QVariant());
+    }else{
+        query.bindValue(":_orders",orderRec->text());
+    }
     query.bindValue(":_f_status",statucRec->currentText());
     query.bindValue(":oldId",code);
     if(!query.exec()){
@@ -183,9 +187,7 @@ void Phone::SELECT_phone()
     dateRec->setText(dateCreate);
     orderRec->setText(parentOrder);
     statucRec->setCurrentText(query.value("_f_status").toString());
-    qDebug()<<parentOrder<<"parentOrder"<<dateCreate;
     if(""!=parentOrder){
-        qDebug()<<getOrderPresentation(parentOrder);
         orders_presentation->setText(getOrderPresentation(parentOrder));
     }
     if(!callsTable->modelCall->select()){
@@ -287,7 +289,6 @@ void Phone::action_chooseFile()
 
 QStringList Phone::getDealersFromFile(QString dealer)
 {
-    qDebug()<<dealer;
     QSqlQuery query(Settings::S()->_db);
     query.prepare("SELECT "
                   " dealers._name as _name, "
@@ -306,12 +307,10 @@ QStringList Phone::getDealersFromFile(QString dealer)
         return dataList;
     }
     query.next();
-    qDebug()<<query.size();
     dataList<<query.value("_name").toString()
             <<query.value("lastDate").toString()
             <<query.value("isEmail").toString()
             <<query.value("_activePhone").toString();
-    qDebug()<<dataList;
     return dataList;
 }
 

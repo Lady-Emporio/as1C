@@ -16,11 +16,14 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QDataWidgetMapper>
-#include <QDebug>
+//#include <QDebug>
 #include <QVBoxLayout>
 #include <QListWidget>
 #include <QMenuBar>
-#include <QComboBox>
+
+//#include <QComboBox>
+#include "BaseObject/mycombobox.h"
+
 #include <QMainWindow>
 #include <QMdiArea>
 #include <QMdiSubWindow>

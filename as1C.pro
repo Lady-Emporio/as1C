@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     mw_opens/destiny_open.cpp \
     Reports/reportforcontrol.cpp \
     Catalogs/Managers/managerslist.cpp \
-    Catalogs/Cars/carslist.cpp
+    Catalogs/Cars/carslist.cpp \
+    BaseObject/mycombobox.cpp
 
 HEADERS  += mainwindow.h \
     Settings/settings.h \
@@ -63,4 +64,5 @@ HEADERS  += mainwindow.h \
     Documents/Destiny/destinylist.h \
     Reports/reportforcontrol.h \
     Catalogs/Managers/managerslist.h \
-    Catalogs/Cars/carslist.h
+    Catalogs/Cars/carslist.h \
+    BaseObject/mycombobox.h

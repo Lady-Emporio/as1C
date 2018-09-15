@@ -25,7 +25,8 @@ PhonesList::PhonesList(QWidget *parent,QString parentOrder) : BaseTable(parent),
         filter->setText(defaultFilter);
         filter->setEnabled(false);
         setFilterButton->hide();
-    }else{
+    }
+    else{
         this->hideFilter();
     }
     commitButton->hide();

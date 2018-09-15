@@ -6,7 +6,7 @@ void DestinyTrade::makeGui()
     orderPresentation=new QLabel(this);
     parentTrade=new QLabel(this);
     boughtClient=new QLineEdit(this);
-    soldManager=new QComboBox(this);
+    soldManager=new MyComboBox(this);
     QSqlQueryModel *modelManagers = new QSqlQueryModel;
     modelManagers->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0 and _parent='OnlyManagers'",Settings::S()->_db);
     soldManager->setModel(modelManagers);

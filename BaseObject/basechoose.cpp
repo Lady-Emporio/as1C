@@ -13,13 +13,16 @@ void baseChoose::makeGui()
     model = new QSqlRelationalTableModel(this,Settings::S()->_db);
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->setTable(table);
+    model->setFilter(defaultFilter);
+    model->setSort(2,Qt::AscendingOrder);
     model->select();
     TableChoose *tableView=new TableChoose(this,realParent);
+    tableView->sortByColumn(2,Qt::AscendingOrder);
     tableView->setObjectName(someData);
     tableView->setModel(model);
     tableView->setColumnWidth(2,300);
+    tableView->setSortingEnabled(true);
     mainLayout->addWidget(tableView);
-    model->setFilter(defaultFilter);
 
     connect(forFilter, SIGNAL(clicked()), this, SLOT(action_backToFilters()));
 }

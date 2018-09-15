@@ -12,11 +12,11 @@ class Order : public QWidget
     LabelChoose *carChooseLabel;
     QLineEdit * idRec;
     QLabel * dateRec;
-    QComboBox * managerRec;
+    MyComboBox * managerRec;
     QLineEdit * clientRec;
     QLineEdit *rlRec;
-    QComboBox *statusRec;
-    QComboBox *order_stock;
+    MyComboBox *statusRec;
+    MyComboBox *order_stock;
     QString code;
     QString dateCreate;
     QString indexCar;

@@ -14,7 +14,7 @@ class Phone : public QWidget
     QLineEdit * idRec;
     QLabel * dateRec;
     QLineEdit * orderRec;
-    QComboBox * statucRec;
+    MyComboBox * statucRec;
     QLabel * orders_presentation;
     void makeGui();
     void itsNew();

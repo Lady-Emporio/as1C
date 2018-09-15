@@ -17,6 +17,7 @@ void Order::makeGui()
     subColorTable->tableView->hideColumn(subColorTable->indexColumnToHide);
     subColorTable->tableView->hideColumn(subColorTable->parentColumnToHide);
     subColorTable->tableView->horizontalHeader()->setStretchLastSection(true);
+    //subColorTable->tableView->setItemDelegateForColumn(1,);
 
     subOptionTable=new Subtable(this,0,2,code,-1);
     subOptionTable->modelRelational=nullptr;
@@ -44,13 +45,13 @@ void Order::makeGui()
 
     QSqlQueryModel *modelAction = new QSqlQueryModel;
     modelAction->setQuery("SELECT _name FROM order_stocks WHERE _mark=0",Settings::S()->_db);
-    order_stock=new QComboBox(this);
+    order_stock=new MyComboBox(this);
     order_stock->setModel(modelAction);
     order_stock->setModelColumn(0);
 
     idRec=new QLineEdit(this);
     dateRec=new QLabel(dateCreate,this);
-    managerRec=new QComboBox(this);
+    managerRec=new MyComboBox(this);
 
     QSqlQueryModel *modelManagers = new QSqlQueryModel;
     modelManagers->setQuery("SELECT _code FROM managers WHERE _folder=0 and _mark=0 and _parent='OnlyManagers'",Settings::S()->_db);
@@ -63,7 +64,7 @@ void Order::makeGui()
     idRec->setText(code);
 
     carChooseLabel=new LabelChoose(this,this);
-    statusRec=new QComboBox(this);
+    statusRec=new MyComboBox(this);
     statusRec->insertItem(0,"Search!!!");
     statusRec->insertItem(1,"Cancel");
     statusRec->insertItem(2,"Found");

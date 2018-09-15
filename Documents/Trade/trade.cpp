@@ -6,7 +6,7 @@ void Trade::makeGui()
     this->setLayout(mainLayout);
     _idRec=new QLabel(code,this);
     _dateRec=new QLabel(dateCreate,this);
-    _statusRec=new QComboBox(this);
+    _statusRec=new MyComboBox(this);
     _statusRec->insertItem(0,"Учитывать в отчете по поиску");
     _statusRec->insertItem(0,"Не учитывать в отчете");
     _ordersPresentation=new QLabel(this);
@@ -169,7 +169,6 @@ Trade::Trade(QWidget *parent, QString code) : QWidget(parent),code(code)
 
 void Trade::setChooseCar(QString chooseIndex, QString chooseName, QString labelName)
 {
-    qDebug()<<chooseIndex <<chooseName <<labelName;
     if("getCarRec"==labelName){
         getCarIndexChoose=chooseIndex;
         getCarNameChoose=chooseName;

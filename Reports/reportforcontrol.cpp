@@ -47,7 +47,7 @@ void ReportForControl::setTable()
     tableFormat.setAlignment(Qt::AlignHCenter); //выравнивание
     tableFormat.setCellPadding(2);
     tableFormat.setCellSpacing(2);
-    table = m_cursor->insertTable(1, 13);
+    table = m_cursor->insertTable(1, 14);
     table->setFormat(tableFormat);
 
 //    destinyTrade._boughtCliend as _boughtCliend,
@@ -63,20 +63,20 @@ void ReportForControl::setTable()
 //    trade._giveAwayVin as _giveAwayVin,
 //    trade._giveAwayDate as _giveAwayDate,
 //    trade._color_option_trade as _color_option_trade
-
-    table->cellAt(0, 0).firstCursorPosition().insertText("Купил клиент:");
-    table->cellAt(0, 1).firstCursorPosition().insertText("Продал менеджер:");
-    table->cellAt(0, 2).firstCursorPosition().insertText("Дата продажи:");
-    table->cellAt(0, 3).firstCursorPosition().insertText("Менеджер:");
-    table->cellAt(0, 4).firstCursorPosition().insertText("Клиент:");
-    table->cellAt(0, 5).firstCursorPosition().insertText("РЛ:");
-    table->cellAt(0, 6).firstCursorPosition().insertText("Дата полученного:");
-    table->cellAt(0, 7).firstCursorPosition().insertText("Вин полученный:");
-    table->cellAt(0, 8).firstCursorPosition().insertText("Модель полученная:");
-    table->cellAt(0, 9).firstCursorPosition().insertText("Дата отданного:");
-    table->cellAt(0, 10).firstCursorPosition().insertText("Вин отданного:");
-    table->cellAt(0, 11).firstCursorPosition().insertText("Модель отданного:");
-    table->cellAt(0, 12).firstCursorPosition().insertText("Цвета опции обмена:");
+    table->cellAt(0, 0).firstCursorPosition().insertText("Номер:");
+    table->cellAt(0, 1).firstCursorPosition().insertText("Купил клиент:");
+    table->cellAt(0, 2).firstCursorPosition().insertText("Продал менеджер:");
+    table->cellAt(0, 3).firstCursorPosition().insertText("Дата продажи:");
+    table->cellAt(0, 4).firstCursorPosition().insertText("Менеджер:");
+    table->cellAt(0, 5).firstCursorPosition().insertText("Клиент:");
+    table->cellAt(0, 6).firstCursorPosition().insertText("РЛ:");
+    table->cellAt(0, 7).firstCursorPosition().insertText("Дата полученного:");
+    table->cellAt(0, 8).firstCursorPosition().insertText("Вин полученный:");
+    table->cellAt(0, 9).firstCursorPosition().insertText("Модель полученная:");
+    table->cellAt(0, 10).firstCursorPosition().insertText("Дата отданного:");
+    table->cellAt(0, 11).firstCursorPosition().insertText("Вин отданного:");
+    table->cellAt(0, 12).firstCursorPosition().insertText("Модель отданного:");
+    table->cellAt(0, 13).firstCursorPosition().insertText("Цвета опции обмена:");
 
 }
 
@@ -116,22 +116,25 @@ void ReportForControl::getSqlTable()
         msgBox.exec();
         return;
     }
+    int row_nomber=0;
     while(query.next()){
+        ++row_nomber;
         table->appendRows(1);
         int row=table->rows()-1;
-        table->cellAt(row, 0).firstCursorPosition().insertText(query.value("_boughtCliend").toString());
-        table->cellAt(row, 1).firstCursorPosition().insertText(query.value("_soldManager").toString());
-        table->cellAt(row, 2).firstCursorPosition().insertText(query.value("_dateSold").toString());
-        table->cellAt(row, 3).firstCursorPosition().insertText(query.value("_nameForArmour").toString());
-        table->cellAt(row, 4).firstCursorPosition().insertText(query.value("findForClient").toString());
-        table->cellAt(row, 5).firstCursorPosition().insertText(query.value("findForWorkList").toString());
-        table->cellAt(row, 6).firstCursorPosition().insertText(query.value("_getDate").toString());
-        table->cellAt(row, 7).firstCursorPosition().insertText(query.value("_getVin").toString());
-        table->cellAt(row, 8).firstCursorPosition().insertText(query.value("_getCar").toString());
-        table->cellAt(row, 9).firstCursorPosition().insertText(query.value("_giveAwayDate").toString());
-        table->cellAt(row, 10).firstCursorPosition().insertText(query.value("_giveAwayVin").toString());
-        table->cellAt(row, 11).firstCursorPosition().insertText(query.value("_giveAwayCar").toString());
-        table->cellAt(row, 12).firstCursorPosition().insertText(query.value("_color_option_trade").toString());
+        table->cellAt(row, 0).firstCursorPosition().insertText(QString("").setNum(row_nomber));
+        table->cellAt(row, 1).firstCursorPosition().insertText(query.value("_boughtCliend").toString());
+        table->cellAt(row, 2).firstCursorPosition().insertText(query.value("_soldManager").toString());
+        table->cellAt(row, 3).firstCursorPosition().insertText(query.value("_dateSold").toString());
+        table->cellAt(row, 4).firstCursorPosition().insertText(query.value("_nameForArmour").toString());
+        table->cellAt(row, 5).firstCursorPosition().insertText(query.value("findForClient").toString());
+        table->cellAt(row, 6).firstCursorPosition().insertText(query.value("findForWorkList").toString());
+        table->cellAt(row, 7).firstCursorPosition().insertText(query.value("_getDate").toString());
+        table->cellAt(row, 8).firstCursorPosition().insertText(query.value("_getVin").toString());
+        table->cellAt(row, 9).firstCursorPosition().insertText(query.value("_getCar").toString());
+        table->cellAt(row, 10).firstCursorPosition().insertText(query.value("_giveAwayDate").toString());
+        table->cellAt(row, 11).firstCursorPosition().insertText(query.value("_giveAwayVin").toString());
+        table->cellAt(row, 12).firstCursorPosition().insertText(query.value("_giveAwayCar").toString());
+        table->cellAt(row, 13).firstCursorPosition().insertText(query.value("_color_option_trade").toString());
     };
 }
 

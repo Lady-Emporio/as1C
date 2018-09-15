@@ -8,7 +8,7 @@ ComboBoxDelegate::ComboBoxDelegate(QObject *parent)
 
 QWidget *ComboBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
 {
-  QComboBox* editor = new QComboBox(parent);
+  MyComboBox* editor = new MyComboBox(parent);
   editor->setEditable(true);
   editor->addItems(Items);
   return editor;
@@ -16,13 +16,13 @@ QWidget *ComboBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
 void ComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-  QComboBox *comboBox = static_cast<QComboBox*>(editor);
+  MyComboBox *comboBox = static_cast<MyComboBox*>(editor);
   comboBox->setEditText(index.model()->data(index).toString());
 }
 
 void ComboBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-  QComboBox *comboBox = static_cast<QComboBox*>(editor);
+  MyComboBox *comboBox = static_cast<MyComboBox*>(editor);
   model->setData(index, comboBox->currentText(), Qt::EditRole);
 }
 
@@ -54,7 +54,7 @@ QWidget *DelegateForCall::createEditor(QWidget *parent, const QStyleOptionViewIt
         parentModel->setData(index,now);
         return nullptr;
     }else if(13==index.column()){
-        QComboBox* editor = new QComboBox(parent);
+        MyComboBox* editor = new MyComboBox(parent);
         editor->setEditable(true);
         QStringList Items;
         Items<<""<<"Красный"<<"Зеленый"<<"Синий"<<"Коричневый"<<"Желтый"<<"Фиолетовый";
